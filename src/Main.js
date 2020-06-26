@@ -8,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -81,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Main() {
-    
+
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
@@ -111,7 +112,7 @@ export default function Main() {
         const appName = metas[i].getAttribute('content');
         if (appName != null)
           setAppName(appName);
-          document.title = appName;
+        document.title = appName;
       }
 
       if (metas[i].getAttribute('name') === 'appLogoUrl') {
@@ -167,19 +168,19 @@ export default function Main() {
           >
             <MenuIcon />
           </IconButton>
-          <IconButton 
+          <IconButton
             color="inherit"
             onClick={handleDrawerClose}
             className={clsx(classes.menuButton, !(open || !ready) && classes.hide)}
-            >
+          >
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
           <Typography variant="h6" noWrap className={classes.breadcrumb}>
             {appName}
-            {menuIndex != null && 
-              <ChevronRightIcon /> 
+            {menuIndex != null &&
+              <ArrowRightIcon />
             }
-            {menuIndex != null && 
+            {menuIndex != null &&
               menu[menuIndex]
             }
           </Typography>
@@ -196,15 +197,15 @@ export default function Main() {
         }}
       >
         {appLogoUrl != null &&
-          <img src={appLogoUrl} width={drawerWidth-appLogoMargin} alt="Logo"/>
+          <img src={appLogoUrl} width={drawerWidth - appLogoMargin} alt="Logo" />
         }
-        
+
         <List style={getMarginTopStyle()}>
           {menu.map((text, index) => (
-            <ListItem 
-              button 
-              key={text} 
-              onClick={() => handleMenuSelection(index)} 
+            <ListItem
+              button
+              key={text}
+              onClick={() => handleMenuSelection(index)}
               selected={index === menuIndex}
               disabled={menuDisabled.includes(index)}>
               <ListItemText primary={text} />
@@ -221,13 +222,13 @@ export default function Main() {
         <div className={classes.drawerHeader} />
         {!ready && <Typography paragraph>Missing meta information!</Typography>}
         {ready && menuIndex === 1 &&
-          <ParticipantsInvite/>
+          <ParticipantsInvite />
         }
         {ready && menuIndex === 2 &&
-          <ParticipantsImport/>
+          <ParticipantsImport />
         }
         {ready && menuIndex === 3 &&
-          <ExportData/>
+          <ExportData />
         }
       </main>
     </div>

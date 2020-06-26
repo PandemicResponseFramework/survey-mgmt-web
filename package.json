@@ -11,13 +11,16 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@alekna/react-data-browser": "^1.1.11",
     "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "axios": "^0.19.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-dropzone": "^11.0.1",
-    "react-scripts": "^2.1.5"
+    "react-scripts": "^2.1.5",
+    "xlsx": "^0.16.2"
   },
   "browserslist": [
     ">0.2%",
