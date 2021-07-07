@@ -17,6 +17,11 @@ import React, { useEffect } from 'react';
 import ExportData from './ExportData';
 import ParticipantsImport from './ParticipantsImport';
 import ParticipantsInvite from './ParticipantsInvite';
+import SurveyComponent from './SurveyComponent';
+import { CircularProgress } from '@material-ui/core';
+import Axios from 'axios';
+import { useSnackbar } from 'notistack';
+import 'react-sortable-tree/style.css'; // This only needs to be imported once in your app
 
 const drawerWidth = 240;
 
@@ -64,6 +69,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-end',
   },
   content: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     flexGrow: 1,
     padding: theme.spacing(3),
     transition: theme.transitions.create('margin', {
@@ -79,109 +87,169 @@ const useStyles = makeStyles((theme) => ({
     }),
     marginLeft: 0,
   },
+  loading: {
+    margin: 'auto',
+    width: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 }));
 
 export default function Main() {
 
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
-  const [ready, setReady] = React.useState(false);
-  const [appName, setAppName] = React.useState('Survey Management');
-  const [appLogoUrl, setAppLogoUrl] = React.useState(null);
-  const [appLogoMargin, setAppLogoMargin] = React.useState(0);
-  const [menuIndex, setMenuIndex] = React.useState(2);
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [appConfig, setAppConfig] = React.useState({
+    prepared: false,
+    initialized: false,
+    authorized: false,
+    appServerUrl: null,
+    appName: 'Survey Management',
+    appLogoUrl: null,
+    appLogoMargin: 0,
+    menuIndex: 0,
+    menuOpen: false,
+  })
 
   const menu = ['Survey Management', 'Invite Participants', 'Import Participants', 'Export Data'];
-  const menuDisabled = [0];
+  const menuDisabled = [];
 
-  useEffect(() => {
+  const loadMetaData = () => {
     const metas = document.getElementsByTagName('meta');
+    var appServerUrl, appName, appLogoUrl, appLogoMargin;
 
     for (let i = 0; i < metas.length; i++) {
 
-      if (metas[i].getAttribute('name') === 'appServerUrl') {
-        const appServerUrl = metas[i].getAttribute('content');
-        if (appServerUrl != null) {
-          localStorage.setItem('appServerUrl', appServerUrl);
-          setReady(true);
-        }
-      }
+      if (metas[i].getAttribute('name') === 'appServerUrl')
+        appServerUrl = metas[i].getAttribute('content');
 
-      if (metas[i].getAttribute('name') === 'appName') {
-        const appName = metas[i].getAttribute('content');
-        if (appName != null)
-          setAppName(appName);
-        document.title = appName;
-      }
+      if (metas[i].getAttribute('name') === 'appName')
+        appName = metas[i].getAttribute('content');
 
-      if (metas[i].getAttribute('name') === 'appLogoUrl') {
-        const appLogoUrl = metas[i].getAttribute('content');
-        if (appLogoUrl != null)
-          setAppLogoUrl(appLogoUrl);
-      }
+      if (metas[i].getAttribute('name') === 'appLogoUrl')
+        appLogoUrl = metas[i].getAttribute('content');
 
-      if (metas[i].getAttribute('name') === 'appLogoMargin') {
-        const appLogoMargin = metas[i].getAttribute('content');
-        if (appLogoMargin != null)
-          setAppLogoMargin(appLogoMargin);
-      }
+      if (metas[i].getAttribute('name') === 'appLogoMargin')
+        appLogoMargin = parseInt(metas[i].getAttribute('content'));
     }
-  }, []);
+
+    setAppConfig({
+      ...appConfig,
+      prepared: true,
+      appServerUrl: appServerUrl.replace(/\/$/, ""),
+      appName: appName == null ? appConfig.appName : appName,
+      appLogoUrl: appLogoUrl,
+      appLogoMargin: appLogoMargin,
+    });
+  }
+
+  const initApp = () => {
+    document.title = appConfig.appName;
+    Axios.defaults.baseURL = appConfig.appServerUrl;
+    Axios.defaults.withCredentials = true;
+    Axios.defaults.maxRedirects = 0;
+    
+    Axios.interceptors.response.use((response) => {
+      return response;
+    }, (error) => {
+
+      if (error.response) {
+        
+        if (error.response.status === 401 || error.response.status === 403) {
+          setAppConfig({
+            ...appConfig,
+            authorized: false,
+            initialized: true,
+          });
+        } else if ((typeof error.response.data === 'string' || error.response.data instanceof String) && error.response.data.length > 0) {
+            enqueueSnackbar(error.response.data, { variant: 'error' });
+        } else {
+          enqueueSnackbar(error.message, { variant: 'error' });
+        }
+
+        if (error.response.data && error.response.data.errors)
+          console.error(error.response.data.errors);
+
+      } else {
+        enqueueSnackbar(error.message, { variant: 'error' });
+      }
+
+      return Promise.reject(error);
+    });
+
+    Axios.get('/user').then(function (response) {
+
+      setAppConfig({
+        ...appConfig,
+        authorized: true,
+        initialized: true,
+        menuOpen: true,
+      });
+    }).catch(function (error) {
+      // do nothing
+      console.log(error);
+    });
+  }
+
+  useEffect(() => {
+
+    if (!appConfig.prepared) {
+      loadMetaData();
+    } else {
+      initApp();
+    }
+
+  }, [appConfig.prepared]);
 
   const handleDrawerOpen = () => {
-    if (ready)
-      setOpen(true);
+    setAppConfig({ ...appConfig, menuOpen: true });
   };
 
   const handleDrawerClose = () => {
-    if (ready)
-      setOpen(false);
-  };
-
-  const getMarginTopStyle = () => {
-    return {
-      marginTop: appLogoMargin,
-    }
+    setAppConfig({ ...appConfig, menuOpen: false });
   };
 
   const handleMenuSelection = (index) => {
-    setMenuIndex(index);
+    setAppConfig({ ...appConfig, menuIndex: index });
   }
 
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar
+        id="header"
         position="fixed"
         className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
+          [classes.appBarShift]: appConfig.menuOpen,
         })}
       >
-        <Toolbar>
+        <Toolbar >
           <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            className={clsx(classes.menuButton, (open || !ready) && classes.hide)}
+            className={clsx(classes.menuButton, (appConfig.menuOpen || !appConfig.authorized) && classes.hide)}
           >
             <MenuIcon />
           </IconButton>
           <IconButton
             color="inherit"
             onClick={handleDrawerClose}
-            className={clsx(classes.menuButton, !(open || !ready) && classes.hide)}
+            className={clsx(classes.menuButton, !(appConfig.menuOpen && appConfig.authorized) && classes.hide)}
           >
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
           <Typography variant="h6" noWrap className={classes.breadcrumb}>
-            {appName}
-            {menuIndex != null &&
+            {appConfig.initialized && appConfig.appName}
+            {appConfig.authorized && appConfig.menuIndex != null &&
               <ArrowRightIcon />
             }
-            {menuIndex != null &&
-              menu[menuIndex]
+            {appConfig.authorized && appConfig.menuIndex != null &&
+              menu[appConfig.menuIndex]
             }
           </Typography>
         </Toolbar>
@@ -191,22 +259,22 @@ export default function Main() {
         className={classes.drawer}
         variant="persistent"
         anchor="left"
-        open={open}
+        open={appConfig.menuOpen}
         classes={{
           paper: classes.drawerPaper,
         }}
       >
-        {appLogoUrl != null &&
-          <img src={appLogoUrl} width={drawerWidth - appLogoMargin} alt="Logo" />
+        {appConfig.appLogoUrl != null &&
+          <img src={appConfig.appLogoUrl} width={drawerWidth - appConfig.appLogoMargin} alt="Logo" style={{ marginBottom: appConfig.appLogoMargin }} />
         }
 
-        <List style={getMarginTopStyle()}>
+        <List>
           {menu.map((text, index) => (
             <ListItem
               button
               key={text}
               onClick={() => handleMenuSelection(index)}
-              selected={index === menuIndex}
+              selected={index === appConfig.menuIndex}
               disabled={menuDisabled.includes(index)}>
               <ListItemText primary={text} />
             </ListItem>
@@ -216,18 +284,31 @@ export default function Main() {
 
       <main
         className={clsx(classes.content, {
-          [classes.contentShift]: open,
+          [classes.contentShift]: appConfig.menuOpen,
         })}
       >
         <div className={classes.drawerHeader} />
-        {!ready && <Typography paragraph>Missing meta information!</Typography>}
-        {ready && menuIndex === 1 &&
+
+        {!appConfig.initialized &&
+          <div className={classes.loading}>
+            <CircularProgress />
+          </div>
+        }
+
+        {appConfig.initialized && !appConfig.authorized &&
+          <div>You are not authorized to use the application.</div>
+        }
+
+        {appConfig.authorized && appConfig.menuIndex === 0 &&
+          <SurveyComponent />
+        }
+        {appConfig.authorized && appConfig.menuIndex === 1 &&
           <ParticipantsInvite />
         }
-        {ready && menuIndex === 2 &&
+        {appConfig.authorized && appConfig.menuIndex === 2 &&
           <ParticipantsImport />
         }
-        {ready && menuIndex === 3 &&
+        {appConfig.authorized && appConfig.menuIndex === 3 &&
           <ExportData />
         }
       </main>

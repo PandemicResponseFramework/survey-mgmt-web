@@ -1,8 +1,8 @@
 import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
-import { LinearProgress, Typography, Fade, Box } from '@material-ui/core';
+import { Box, Fade, LinearProgress, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Pagination from '@material-ui/lab/Pagination';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -82,6 +82,10 @@ export default function ImportFeedback(props) {
     const [page, setPage] = React.useState(1);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
+    useEffect(() => {
+        setPage(1);
+    }, [importFeedback.importId]);
+
     const handleChange = (event, value) => {
         setPage(value);
     };
@@ -96,8 +100,8 @@ export default function ImportFeedback(props) {
             case 'state':
                 return (
                     fieldValue === 'ERROR'
-                        ? <Box color="error.main" style={{fontWeight: 'bold'}}>{fieldValue}</Box>
-                        : <Box color="success.main" style={{fontWeight: 'bold'}}>{fieldValue}</Box>
+                        ? <Box color="error.main" style={{ fontWeight: 'bold' }}>{fieldValue}</Box>
+                        : <Box color="success.main" style={{ fontWeight: 'bold' }}>{fieldValue}</Box>
                 );
             default:
                 return fieldValue;
@@ -161,7 +165,7 @@ export default function ImportFeedback(props) {
                                                         fieldReducer(
                                                             getObjectPropertyByString(row, sortField),
                                                             sortField,
-                                                          )
+                                                        )
                                                     }
                                                 </div>
                                             ))}

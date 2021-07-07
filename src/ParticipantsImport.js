@@ -7,6 +7,7 @@ import React, { useCallback } from 'react';
 import ExcelFileDropZone from './ExcelFileDropZone';
 import ImportFeedback from './ImportFeedback';
 import { useInterval } from './Utils';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -36,26 +37,29 @@ const useStyles = makeStyles((theme) => ({
 export default function ParticipantsImport() {
 
     const classes = useStyles();
-    const axios = Axios.create({
-        baseURL: localStorage.getItem('appServerUrl'),
-        withCredentials: true
-    });
+    const { enqueueSnackbar } = useSnackbar();
     const [fileUploadState, setFileUploadState] = React.useState(null);
-    const [importFeedback, setImportFeedback] = React.useState(null);
+    const [importFeedback, setImportFeedback] = React.useState({
+        delay: null,
+    });
 
     const onFileSelectionFeedback = useCallback(feedback => {
+        if (feedback.headers == null) {
+            enqueueSnackbar("Invalid file selected.", { variant: 'error' });
+        }
+
         setFileUploadState({
-            'file': feedback.file,
-            'headers': feedback.headers,
-            'selectedHeader': -1,
+            ...fileUploadState,
+            file: feedback.file,
+            headers: feedback.headers,
+            selectedHeader: -1,
         });
     });
 
     const onHeaderSelection = useCallback(event => {
         setFileUploadState({
-            'file': fileUploadState.file,
-            'headers': fileUploadState.headers,
-            'selectedHeader': event.target.value,
+            ...fileUploadState,
+            selectedHeader: event.target.value,
         });
     });
 
@@ -66,7 +70,7 @@ export default function ParticipantsImport() {
         fd.append('file', fileUploadState.file);
         fd.append('headerIndex', fileUploadState.selectedHeader);
 
-        axios.post('/manage/participant/import', fd, config)
+        Axios.post('/manage/participant/import', fd, config)
             .then(function (response) {
                 setImportFeedback({
                     importId: response.data.token,
@@ -77,34 +81,41 @@ export default function ParticipantsImport() {
                     status: null,
                     entries: [],
                     delay: 1000,
+                    cancelled: false,
                 });
-            })
-            .catch(function (error) {
-                console.log(error);
             });
     };
 
     const onStopImport = () => {
 
-        axios.post('/manage/participant/import/' + importFeedback.importId, null, {
+        Axios.post('/manage/participant/import/' + importFeedback.importId, null, {
             params: {
                 cancel: true,
             }
-        }).catch(function (error) {
-            console.log(error);
+        }).then(response => {
+            setImportFeedback({
+                ...importFeedback,
+                cancelled: true,
+            })
         });
     }
 
+    const buttonDisabled = fileUploadState == null
+        || fileUploadState.headers == null
+        || fileUploadState.selectedHeader == null
+        || fileUploadState.selectedHeader === -1
+        || importFeedback.cancelled;
+
     useInterval(() => {
 
-        axios.get('/manage/participant/import/' + importFeedback.importId, {
+        Axios.get('/manage/participant/import/' + importFeedback.importId, {
             params: {
                 startIndex: importFeedback.startIndex,
                 limit: 500,
             }
         }).then(function (response) {
             setImportFeedback({
-                importId: importFeedback.importId,
+                ...importFeedback,
                 countSuccess: response.data.countSuccess,
                 countFailed: response.data.countFailed,
                 countSkipped: response.data.countSkipped,
@@ -117,13 +128,7 @@ export default function ParticipantsImport() {
         }).catch(function (error) {
             console.log(error);
             setImportFeedback({
-                importId: importFeedback.importId,
-                countSuccess: importFeedback.countSuccess,
-                countFailed: importFeedback.countFailed,
-                countSkipped: importFeedback.countSkipped,
-                startIndex: importFeedback.startIndex,
-                status: importFeedback.status,
-                entries: importFeedback.entries,
+                ...importFeedback,
                 delay: null,
             });
         });
@@ -155,17 +160,17 @@ export default function ParticipantsImport() {
                 <Button
                     variant="contained"
                     color="primary"
-                    disabled={fileUploadState == null || fileUploadState.headers == null || fileUploadState.selectedHeader == null || fileUploadState.selectedHeader === -1}
+                    disabled={buttonDisabled}
                     style={{ marginLeft: 10 }}
-                    startIcon={importFeedback == null || importFeedback.delay == null ? <PlayArrowIcon /> : <StopIcon />}
+                    startIcon={importFeedback.delay == null ? <PlayArrowIcon /> : <StopIcon />}
                     className={classes.button}
-                    onClick={importFeedback == null || importFeedback.delay == null ? onStartImport : onStopImport}>
-                    {importFeedback == null || importFeedback.delay == null ? 'Start' : 'Stop'}
+                    onClick={importFeedback.delay == null ? onStartImport : onStopImport}>
+                    {importFeedback.delay == null ? 'Start' : 'Stop'}
                 </Button>
             </div>
 
             <div className={classes.feedbackContainer}>
-                {importFeedback && <ImportFeedback importFeedback={importFeedback} />}
+                {importFeedback.importId != null && <ImportFeedback importFeedback={importFeedback} />}
             </div>
         </div>
     );

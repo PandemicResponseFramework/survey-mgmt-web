@@ -12,14 +12,21 @@
   "license": "MIT",
   "dependencies": {
     "@alekna/react-data-browser": "^1.1.11",
+    "@date-io/date-fns": "^1.3.13",
     "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
-    "axios": "^0.19.2",
+    "@material-ui/pickers": "^3.2.10",
+    "axios": "^0.21.1",
+    "date-fns": "^2.14.0",
+    "fetch-intercept": "^2.3.1",
+    "js-file-download": "^0.4.12",
+    "notistack": "^0.9.17",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-dropzone": "^11.0.1",
     "react-scripts": "^2.1.5",
+    "react-sortable-tree": "^2.8.0",
     "xlsx": "^0.16.2"
   },
   "browserslist": [

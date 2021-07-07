@@ -49,7 +49,7 @@ export default function ExcelFileDropZone(props) {
             let sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {
                 header: 1,
                 defval: '',
-                blankrows: true
+                blankrows: false,
             });
             callback({
                 'file': file,
