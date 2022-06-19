@@ -1,82 +1,30 @@
-//import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
-import { Box, Fade, LinearProgress, Typography, Pagination } from '@mui/material';
-import { makeStyles } from 'tss-react/mui';
+import { Box, Fade, LinearProgress, Typography, Pagination, Stack, Divider, Paper, TableContainer, Table, TableRow, TableHead, TableBody, TableCell } from '@mui/material';
 import React, { useEffect } from 'react';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
+import { styled } from '@mui/material/styles';
 
-const useStyles = makeStyles()((theme) => ({
-    root: {
-        width: '100%',
-    },
-    countDisplay: {
-        display: 'flex',
-
-        '& > *': {
-            minWidth: 150,
-            marginRight: 10,
-        }
-    },
-    pagination: {
-        display: 'flex',
-        justifyContent: 'center',
-        marginTop: 10,
-    },
-    table: {
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflow: 'none',
-        width: '100%',
-    },
-    head: {
-        display: 'flex',
-        flex: '0 0 auto',
-        height: 46,
-        color: 'black',
-        borderBottom: '1px solid #ccc',
-        padding: '0 5px',
-    },
-    head_row: {
-        display: 'flex',
-        flex: '1 1 auto',
-        textTransform: 'uppercase',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    head_row_item: {
-        display: 'flex',
-        textTransform: 'uppercase',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 10,
-    },
-    body: {
-        display: 'flex',
-        flexDirection: 'column',
-        flex: '1 1 auto',
-        overflowX: 'auto',
-        padding: '0 5px',
-    },
-    body_row: {
-        display: 'flex',
-        flex: '0 0 auto',
-        borderBottom: '1px solid #eee',
-    },
-    body_row_item: {
-        display: 'flex',
-        height: 46,
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        padding: '0 10px',
-        fontSize: '14px',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-    }
-}));
+const Root = styled("div")`
+  width: '100%',
+`;
+const Fader = styled(Fade)`
+  margin-top: 10px;
+`;
+const Pager = styled(Pagination)`
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
+const EmptyResult = styled("div")`
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+`;
 
 export default function ImportFeedback(props) {
 
-    const { classes } = useStyles();
     const { importFeedback } = props;
     const [page, setPage] = React.useState(1);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -89,93 +37,70 @@ export default function ImportFeedback(props) {
         setPage(value);
     };
 
-    const columns = [
-        { label: 'email', sortField: 'email', isLocked: true },
-        { label: 'state', sortField: 'state', isLocked: true },
-    ];
-
-    function fieldReducer(fieldValue, fieldName) {
-        switch (fieldName) {
-            case 'state':
-                return (
-                    fieldValue === 'ERROR'
-                        ? <Box color="error.main" style={{ fontWeight: 'bold' }}>{fieldValue}</Box>
-                        : <Box color="success.main" style={{ fontWeight: 'bold' }}>{fieldValue}</Box>
-                );
-            default:
-                return fieldValue;
-        }
-    }
-
     return (
-        <div className={classes.root}>
+        <Root>
 
-            <div className={classes.countDisplay}>
+            <Stack direction="row" spacing={3} divider={<Divider orientation="vertical" flexItem />}>
+              <Stack direction="row"spacing={1}>
+                <CheckCircleOutlineIcon color="success"/>
                 <Typography variant="body1">Success ({importFeedback == null ? 0 : importFeedback.countSuccess})</Typography>
+              </Stack>
+              <Stack direction="row"spacing={1}>
+                <DoubleArrowIcon color="warning"/>
                 <Typography variant="body1">Skipped ({importFeedback == null ? 0 : importFeedback.countSkipped})</Typography>
+              </Stack>
+              <Stack direction="row"spacing={1}>
+                <ErrorOutlineIcon color="error"/>
                 <Typography variant="body1">Failed ({importFeedback == null ? 0 : importFeedback.countFailed})</Typography>
-            </div>
-            <Fade in={importFeedback.delay != null}>
+              </Stack>
+            </Stack>
+
+            <Fader in={importFeedback.delay != null}>
                 <LinearProgress />
-            </Fade>
+            </Fader>
 
             {importFeedback.entries.length !== 0 &&
-                <Pagination
+                <Pager
                     count={Math.ceil(importFeedback.entries.length / rowsPerPage)}
                     page={page}
                     onChange={handleChange}
-                    className={classes.pagination}
                     color="primary"
                     showFirstButton showLastButton
                 />
             }
 
-            {/* {importFeedback.entries.length !== 0 &&
-                <DataBrowser
-                    initialColumnFlex={['0 0 75%', '0 0 25%']}
-                    columns={columns}
-                >
-                    {
-                        ({ columnFlex, visibleColumns }) => (
-                            <div className={classes.table}>
-                                <div className={classes.head}>
-                                    <div className={classes.head_row}>
-                                        {visibleColumns.map((cell, index) => (
-                                            <div
-                                                key={index}
-                                                className={classes.head_row_item}
-                                                style={{ flex: columnFlex[index] }}
-                                            >
-                                                {cell.label}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className={classes.body}>
-                                    {importFeedback.entries.slice((page - 1) * rowsPerPage, Math.min((page) * rowsPerPage, importFeedback.entries.length)).map((row, key) => (
-                                        <div key={key} className={classes.body_row}>
-                                            {visibleColumns.map(({ label, sortField }, index) => (
-                                                <div
-                                                    key={sortField}
-                                                    className={classes.body_row_item}
-                                                    style={{ flex: columnFlex[index] }}
-                                                >
-                                                    {
-                                                        fieldReducer(
-                                                            getObjectPropertyByString(row, sortField),
-                                                            sortField,
-                                                        )
-                                                    }
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )
-                    }
-                </DataBrowser>
-            } */}
-        </div>
+            {importFeedback.entries.length !== 0 &&
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>E-Mail</TableCell>
+                      <TableCell>State</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {importFeedback.entries.slice((page - 1) * rowsPerPage, Math.min((page) * rowsPerPage, importFeedback.entries.length)).map((entry) => (
+                      <TableRow
+                        key={entry.email}
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                      >
+                        <TableCell component="th" scope="row">{entry.email}</TableCell>
+                        <TableCell>
+                          {entry.state === 'ERROR'
+                            ? <Box color="error.main" style={{ fontWeight: 'bold' }}>{entry.state}</Box>
+                            : <Box color="success.main" style={{ fontWeight: 'bold' }}>{entry.state}</Box>
+                          }
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            }
+
+            {importFeedback.entries.length === 0 &&
+              <EmptyResult>No result to display.</EmptyResult>
+            }
+        </Root>
     );
 }
