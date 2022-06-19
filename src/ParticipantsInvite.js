@@ -1,5 +1,4 @@
 import { Box, Button, Fab, Tooltip, Fade, Grid, LinearProgress, TextField, InputAdornment, Pagination, Paper, TableContainer, Table, TableRow, TableHead, TableBody, TableCell } from '@mui/material';
-import { makeStyles } from 'tss-react/mui';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -10,23 +9,17 @@ import React, { useEffect } from 'react';
 import { binaryFind, insert, useInterval } from './Utils';
 import { styled } from '@mui/material/styles';
 
-const useStyles = makeStyles()((theme) => ({
-  container: {
-    '& > div': {
-      display: 'flex',
-      alignItems: 'flex-end'
-    }
-  },
-  button: {
-    flexGrow: 1,
-  },
-}));
-
 const Root = styled("div")`
   display: flex;
   flex-direction: column;
   width: 100%;
   justify-content: space-between;
+`;
+const MainGrid = styled(Grid)`
+  '& > div': {
+    display: 'flex',
+    alignItems: 'flex-end'
+  }
 `;
 const Fader = styled(Fade)`
   margin-top: 10px;
@@ -55,6 +48,10 @@ const GrowingTextField = styled(TextField)`
   flex-grow: 1;
   width: 100%;
 `;
+const GrowingButton = styled(Button)`
+  flex-grow: 1;
+  width: 100%;
+`;
 const Pager = styled(Pagination)`
   display: flex;
   justify-content: center;
@@ -64,7 +61,6 @@ const Pager = styled(Pagination)`
 
 export default function InviteParticipants() {
 
-  const { classes, cx } = useStyles();
   const patternEmailSimple = /^\S+[@]\S+[.]\S+$/i;
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -196,7 +192,7 @@ export default function InviteParticipants() {
   return (
     <Root>
       <div>
-        <Grid container spacing={3} className={classes.container}>
+        <Grid container spacing={2}>
           <Grid item xs={9}>
             <GrowingTextField
               label="Type the email address of the participant to invite"
@@ -212,18 +208,15 @@ export default function InviteParticipants() {
             />
           </Grid>
           <Grid item xs={3}>
-            <Button
+            <GrowingButton
               variant="contained"
               color="primary"
               disabled={!(patternEmailSimple.test(email) && email.length <= 256)}
               startIcon={<PersonAddIcon />}
-              className={classes.button}
               onClick={() => onStartInvite(email)}>
               Invite
-          </Button>
+          </GrowingButton>
           </Grid>
-        </Grid>
-        <Grid container spacing={3} className={classes.container}>
           <Grid item xs={9}>
             <GrowingTextField
               label="Search for email address"
@@ -240,15 +233,14 @@ export default function InviteParticipants() {
             />
           </Grid>
           <Grid item xs={3}>
-            <Button
+            <GrowingButton
               variant="contained"
               color="primary"
               disabled={loadingState.delay != null}
               startIcon={<RefreshIcon />}
-              className={classes.button}
               onClick={onRefresh}>
               Refresh
-          </Button>
+          </GrowingButton>
           </Grid>
         </Grid>
       </div>
