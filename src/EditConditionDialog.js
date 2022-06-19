@@ -1,13 +1,13 @@
 import React from 'react';
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, FormGroup, FormControl, InputLabel, Select, MenuItem, IconButton} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import {QuestionTypes} from './Constants';
-import CancelIcon from '@material-ui/icons/Cancel';
-import SaveIcon from '@material-ui/icons/Save';
-import DeleteIcon from '@material-ui/icons/Delete';
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, FormGroup, FormControl, InputLabel, Select, MenuItem, IconButton} from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import { QuestionTypes } from './Constants';
+import CancelIcon from '@mui/icons-material/Cancel';
+import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Axios from 'axios';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
   form2: {
     margin: theme.spacing(1),
     minWidth: 440,
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EditConditionDialog({question, callbackHandleClose}) {
 
-  const classes = useStyles();
+  const { classes } = useStyles();
 
   const title = question.container == null ? 'Add Condition' : 'Edit Condition';
 

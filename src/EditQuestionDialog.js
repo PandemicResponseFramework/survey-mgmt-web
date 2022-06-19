@@ -1,15 +1,15 @@
 import React from 'react';
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton, FormGroup, FormControl, FormControlLabel, InputLabel, Select, MenuItem, TextField, Switch} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton, FormGroup, FormControl, FormControlLabel, InputLabel, Select, MenuItem, TextField, Switch} from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 import {QuestionTypes} from './Constants';
 import {isInteger, isPositiveInteger} from './Utils';
-import CancelIcon from '@material-ui/icons/Cancel';
-import SaveIcon from '@material-ui/icons/Save';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
+import CancelIcon from '@mui/icons-material/Cancel';
+import SaveIcon from '@mui/icons-material/Save';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Axios from 'axios';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
   form2: {
     margin: theme.spacing(1),
     minWidth: 440,
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EditQuestionDialog({parentId, surveyElement, callbackHandleClose}) {
 
-  const classes = useStyles();
+  const { classes } = useStyles();
 
   const title = surveyElement == null ? 'Add Question' : 'Edit Question';
 

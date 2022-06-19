@@ -1,14 +1,14 @@
-import { Button, Grid, TextField, Select, MenuItem, Checkbox, Fade, LinearProgress, FormControl, InputLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Button, Grid, TextField, Select, MenuItem, Checkbox, Fade, LinearProgress, FormControl, InputLabel } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 import React, { useEffect } from 'react';
-import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { DateTimePicker } from '@mui/x-date-pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import CancelIcon from '@material-ui/icons/Cancel';
-import SaveIcon from '@material-ui/icons/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import SaveIcon from '@mui/icons-material/Save';
 import {isPositiveInteger, useInterval} from './Utils';
 import Axios from 'axios';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SurveyCreate({callback}) {
 
-  const classes = useStyles();
+  const { classes } = useStyles();
 
   const MAX_LENGTH_NAMEID = 32;
   const MAX_LENGTH_TITLE = 64;
@@ -327,18 +327,16 @@ export default function SurveyCreate({callback}) {
               
               <span>starting at</span>
               
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDateTimePicker
-                  margin="normal"
-                  id="interval-start-dialog"
-                  format="dd-MM-yyyy HH:mm"
-                  onChange={onChangeIntervalStart}
-                  value={surveyData.intervalStart}
-                  error={errors.intervalStart}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }} />
-              </MuiPickersUtilsProvider>
+              <DateTimePicker
+                margin="normal"
+                id="interval-start-dialog"
+                format="dd-MM-yyyy HH:mm"
+                onChange={onChangeIntervalStart}
+                value={surveyData.intervalStart}
+                error={errors.intervalStart}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }} />
             </div>
           }
         </Grid>

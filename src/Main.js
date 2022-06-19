@@ -1,31 +1,22 @@
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import MenuIcon from '@material-ui/icons/Menu';
-import clsx from 'clsx';
+import { AppBar, CssBaseline, Drawer, IconButton, List, ListItem, ListItemText, Toolbar, Typography, CircularProgress } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import { useTheme } from '@mui/material/styles';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MenuIcon from '@mui/icons-material/Menu';
 import React, { useEffect } from 'react';
 import ExportData from './ExportData';
 import ParticipantsImport from './ParticipantsImport';
 import ParticipantsInvite from './ParticipantsInvite';
 import SurveyComponent from './SurveyComponent';
-import { CircularProgress } from '@material-ui/core';
 import Axios from 'axios';
-import { useSnackbar } from 'notistack';
-import 'react-sortable-tree/style.css'; // This only needs to be imported once in your app
+import { useSnackbar } from 'react-notistack';
+import '@nosferatu500/react-sortable-tree/style.css'; // This only needs to be imported once in your app
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
   root: {
     display: 'flex',
   },
@@ -98,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Main() {
 
-  const classes = useStyles();
+  const { classes, cx } = useStyles();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -222,7 +213,7 @@ export default function Main() {
       <AppBar
         id="header"
         position="fixed"
-        className={clsx(classes.appBar, {
+        className={cx(classes.appBar, {
           [classes.appBarShift]: appConfig.menuOpen,
         })}
       >
@@ -232,14 +223,14 @@ export default function Main() {
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            className={clsx(classes.menuButton, (appConfig.menuOpen || !appConfig.authorized) && classes.hide)}
+            className={cx(classes.menuButton, (appConfig.menuOpen || !appConfig.authorized) && classes.hide)}
           >
             <MenuIcon />
           </IconButton>
           <IconButton
             color="inherit"
             onClick={handleDrawerClose}
-            className={clsx(classes.menuButton, !(appConfig.menuOpen && appConfig.authorized) && classes.hide)}
+            className={cx(classes.menuButton, !(appConfig.menuOpen && appConfig.authorized) && classes.hide)}
           >
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
@@ -283,7 +274,7 @@ export default function Main() {
       </Drawer>
 
       <main
-        className={clsx(classes.content, {
+        className={cx(classes.content, {
           [classes.contentShift]: appConfig.menuOpen,
         })}
       >

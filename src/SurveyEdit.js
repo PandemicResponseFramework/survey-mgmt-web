@@ -1,29 +1,29 @@
-import { Fade, LinearProgress, IconButton, Button, Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Fade, LinearProgress, IconButton, Button, Tooltip } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 import React, { useEffect } from 'react';
 import { useInterval } from './Utils';
 import Axios from 'axios';
-import SortableTree from 'react-sortable-tree';
-import CheckBoxIcon from '@material-ui/icons/CheckBoxOutlined';
-import RadioButtonIcon from '@material-ui/icons/RadioButtonCheckedOutlined';
-import TextIcon from '@material-ui/icons/TextFields';
-import ToggleIcon from '@material-ui/icons/ToggleOffOutlined';
-import NumberIcon from '@material-ui/icons/Looks3Outlined';
-import SliderIcon from '@material-ui/icons/TuneOutlined';
-import ListIcon from '@material-ui/icons/ReorderOutlined';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import NewReleasesIcon from '@material-ui/icons/NewReleases';
-import CallSplitIcon from '@material-ui/icons/CallSplit';
+import SortableTree from '@nosferatu500/react-sortable-tree';
+import CheckBoxIcon from '@mui/icons-material/CheckBoxOutlined';
+import RadioButtonIcon from '@mui/icons-material/RadioButtonCheckedOutlined';
+import TextIcon from '@mui/icons-material/TextFields';
+import ToggleIcon from '@mui/icons-material/ToggleOffOutlined';
+import NumberIcon from '@mui/icons-material/Looks3Outlined';
+import SliderIcon from '@mui/icons-material/TuneOutlined';
+import ListIcon from '@mui/icons-material/ReorderOutlined';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import CallSplitIcon from '@mui/icons-material/CallSplit';
 import EditQuestionDialog from './EditQuestionDialog';
 import EditConditionDialog from './EditConditionDialog';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
 import {QuestionTypes, ReleaseStatusTypes, ManagementViewTypes} from './Constants';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {
       display: 'flex',
       flexDirection: 'column',
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SurveyEdit({callback, surveyId}) {
 
-  const classes = useStyles();
+  const { classes } = useStyles();
 
   const [loadingState, setLoadingState] = React.useState({
       data: [],
@@ -479,4 +479,4 @@ export default function SurveyEdit({callback, surveyId}) {
       }
     </div>
   );
-};
+}

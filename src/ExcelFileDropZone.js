@@ -1,12 +1,11 @@
-import { RootRef } from '@material-ui/core';
-import { grey } from '@material-ui/core/colors';
-import { makeStyles } from '@material-ui/core/styles';
-import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
+import { grey } from '@mui/material/colors';
+import { makeStyles } from 'tss-react/mui';
+import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx/xlsx.mjs';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {
         display: 'flex',
     },
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ExcelFileDropZone(props) {
 
-    const classes = useStyles();
+    const { classes } = useStyles();
     const {callback} = props;
 
     const onDrop = useCallback(acceptedFiles => {
@@ -60,18 +59,15 @@ export default function ExcelFileDropZone(props) {
 
     }, []);
 
-    const { getRootProps, getInputProps } = useDropzone({ accept: ".xlsx", onDrop });
-    const { ref, ...rootProps } = getRootProps();
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ accept: ".xlsx", onDrop })
 
     return (
         <div className={classes.root}>
-            <RootRef rootRef={ref}>
-                <div {...rootProps} className={classes.dropzone}>
-                    <input {...getInputProps()} multiple={false} />
-                    <InsertDriveFileOutlinedIcon className={classes.dropzoneIcon} fontSize="large" />
-                    <p>Drag 'n' drop the file here, or click to select a file</p>
-                </div>
-            </RootRef>
+            <div {...getRootProps()} className={classes.dropzone}>
+                <input {...getInputProps()} multiple={false} />
+                <InsertDriveFileOutlinedIcon className={classes.dropzoneIcon} fontSize="large" />
+                <p>Drag 'n' drop the file here, or click to select a file</p>
+            </div>
         </div>
     );
 }

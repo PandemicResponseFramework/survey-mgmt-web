@@ -1,37 +1,33 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { Button } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { Button, TextField, Stack } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import { DateTimePicker } from '@mui/x-date-pickers';
 import Axios from 'axios';
 import FileDownload from 'js-file-download';
 import React from 'react';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
   root: {
-    display: 'flex',
     width: '60%',
-    flexDirection: 'column',
-  },
-  button: {
-    marginTop: 10,
   },
 }));
 
 export default function ExportData() {
 
-  const classes = useStyles();
+  const { classes } = useStyles();
   const [interval, setInterval] = React.useState({
     start: Date.now(),
     end: Date.now(),
+    valid: true,
   });
 
   const onStartChange = (date) => {
-    setInterval({ ...interval, start: date.getTime() });
+    setInterval({ ...interval, start: date.getTime(), valid: date.getTime() < interval.end });
   };
 
   const onEndChange = (date) => {
-    setInterval({ ...interval, end: date.getTime() });
+    setInterval({ ...interval, end: date.getTime(), valid: interval.start < date.getTime() });
   };
 
   const onStartExport = () => {
@@ -49,42 +45,29 @@ export default function ExportData() {
   };
 
   return (
-    <div className={classes.root}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDateTimePicker
-          margin="normal"
-          id="interval-start-dialog"
-          label="From"
-          format="dd-MM-yyyy HH:mm"
-          value={interval.start}
-          maxDate={interval.end}
-          onChange={onStartChange}
-          KeyboardButtonProps={{
-            'aria-label': 'change date',
-          }} />
-      </MuiPickersUtilsProvider>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDateTimePicker
-          margin="normal"
-          id="interval-end-dialog"
-          label="To"
-          format="dd-MM-yyyy HH:mm"
-          value={interval.end}
-          minDate={interval.start}
-          onChange={onEndChange}
-          KeyboardButtonProps={{
-            'aria-label': 'change date',
-          }} />
-      </MuiPickersUtilsProvider>
+    <Stack spacing={2} className={classes.root}>
+      <DateTimePicker
+        label="From"
+        value={interval.start}
+        onChange={onStartChange}
+        renderInput={(params) => <TextField {...params} />}
+      />
+      <DateTimePicker
+        label="To"
+        value={interval.end}
+        minDateTime={interval.start}
+        onChange={onEndChange}
+        renderInput={(params) => <TextField {...params} error={!interval.valid} helperText={interval.valid ? null : "Selected end date/time must be after the selected start date/time"}/>}
+      />
       <Button
         variant="contained"
         color="primary"
-        disabled={interval.start >= interval.end}
+        disabled={!interval.valid}
         startIcon={<GetAppIcon />}
         className={classes.button}
         onClick={onStartExport}>
         Export
       </Button>
-    </div>
+    </Stack>
   );
 }

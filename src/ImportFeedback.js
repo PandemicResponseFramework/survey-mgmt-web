@@ -1,10 +1,9 @@
-import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
-import { Box, Fade, LinearProgress, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import Pagination from '@material-ui/lab/Pagination';
+//import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
+import { Box, Fade, LinearProgress, Typography, Pagination } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 import React, { useEffect } from 'react';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {
         width: '100%',
     },
@@ -77,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ImportFeedback(props) {
 
-    const classes = useStyles();
+    const { classes } = useStyles();
     const { importFeedback } = props;
     const [page, setPage] = React.useState(1);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -131,7 +130,7 @@ export default function ImportFeedback(props) {
                 />
             }
 
-            {importFeedback.entries.length !== 0 &&
+            {/* {importFeedback.entries.length !== 0 &&
                 <DataBrowser
                     initialColumnFlex={['0 0 75%', '0 0 25%']}
                     columns={columns}
@@ -176,7 +175,7 @@ export default function ImportFeedback(props) {
                         )
                     }
                 </DataBrowser>
-            }
+            } */}
         </div>
     );
 }

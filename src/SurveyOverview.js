@@ -1,11 +1,11 @@
-import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
-import { Box, Button, Fade, Grid, LinearProgress, IconButton, Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import DeleteIcon from '@material-ui/icons/Delete';
-import NewReleasesIcon from '@material-ui/icons/NewReleases';
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import VisibilityIcon from '@material-ui/icons/Visibility';
+//import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
+import { Box, Button, Fade, Grid, LinearProgress, IconButton, Tooltip } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import DeleteIcon from '@mui/icons-material/Delete';
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import Axios from 'axios';
 import React, { useEffect } from 'react';
 import { useInterval } from './Utils';
@@ -13,7 +13,7 @@ import {ReleaseStatusTypes, ManagementViewTypes} from './Constants';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
 import { format } from 'date-fns';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SurveyOverview({callback}) {
 
-  const classes = useStyles();
+  const { classes } = useStyles();
 
   const [loadingState, setLoadingState] = React.useState({
     data: [],
@@ -153,6 +153,8 @@ export default function SurveyOverview({callback}) {
   }
 
   const data = prepare();
+
+  console.log(data);
 
   const onCreateNewVersion = (surveyId) => {
     Axios.post('/manage/survey/' + surveyId + '/version')
@@ -273,7 +275,7 @@ export default function SurveyOverview({callback}) {
           <LinearProgress />
         </Fade>
 
-        <div className={classes.tableContainer}>
+        {/* <div className={classes.tableContainer}>
           <DataBrowser
             initialColumnFlex={['0 0 15%', '0 0 15%', '0 0 10%', '0 0 10%', '0 0 10%', '0 0 20%', '0 0 20%']}
             columns={columns}
@@ -315,7 +317,7 @@ export default function SurveyOverview({callback}) {
               )
             }
           </DataBrowser>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from 'tss-react/mui';
 import SurveyOverview from './SurveyOverview';
 import SurveyEdit from './SurveyEdit';
 import {ManagementViewTypes} from './Constants'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {
       display: 'flex',
       flexDirection: 'column',
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SurveyComponent() {
 
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const [state, setState] = React.useState({
         view: ManagementViewTypes.SURVEY_OVERVIEW,

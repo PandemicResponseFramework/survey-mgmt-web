@@ -1,18 +1,16 @@
-import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
-import { Box, Button, Fade, Grid, LinearProgress, TextField, InputAdornment } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import DeleteIcon from '@material-ui/icons/Delete';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import EmailIcon from '@material-ui/icons/Email';
-import SearchIcon from '@material-ui/icons/Search';
-import Pagination from '@material-ui/lab/Pagination';
+//import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
+import { Box, Button, Fade, Grid, LinearProgress, TextField, InputAdornment, Pagination } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import EmailIcon from '@mui/icons-material/Email';
+import SearchIcon from '@mui/icons-material/Search';
 import Axios from 'axios';
-import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { binaryFind, insert, useInterval } from './Utils';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -103,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function InviteParticipants() {
 
-  const classes = useStyles();
+  const { classes, cx } = useStyles();
   const patternEmailSimple = /^\S+[@]\S+[.]\S+$/i;
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -278,7 +276,7 @@ export default function InviteParticipants() {
         return (
           <TextField
             variant="outlined"
-            className={clsx(classes.textField, classes.tableTextField)}
+            className={cx(classes.textField, classes.tableTextField)}
             disabled={loadingState.delay != null}
             placeholder="Enter Token"
             onChange={(event) => onChangeConfirmationToken(event, row.email)}
@@ -367,7 +365,7 @@ export default function InviteParticipants() {
             color="primary"
             showFirstButton showLastButton
           />
-          <DataBrowser
+          {/* <DataBrowser
             initialColumnFlex={['0 0 35%', '0 0 10%', '0 0 25%', '0 0 30%']}
             columns={columns}
           >
@@ -407,7 +405,7 @@ export default function InviteParticipants() {
                 </div>
               )
             }
-          </DataBrowser>
+          </DataBrowser> */}
         </div>
       </div>
     </div>

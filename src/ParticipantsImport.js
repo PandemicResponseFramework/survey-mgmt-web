@@ -1,15 +1,15 @@
-import { Button, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import StopIcon from '@material-ui/icons/Stop';
+import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import StopIcon from '@mui/icons-material/Stop';
 import Axios from 'axios';
 import React, { useCallback } from 'react';
 import ExcelFileDropZone from './ExcelFileDropZone';
 import ImportFeedback from './ImportFeedback';
 import { useInterval } from './Utils';
-import { useSnackbar } from 'notistack';
+import { useSnackbar } from 'react-notistack';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
 
     root: {
         display: 'flex',
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ParticipantsImport() {
 
-    const classes = useStyles();
+    const { classes } = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const [fileUploadState, setFileUploadState] = React.useState(null);
     const [importFeedback, setImportFeedback] = React.useState({
@@ -140,9 +140,10 @@ export default function ParticipantsImport() {
 
             <div className={classes.actionContainer}>
                 <FormControl className={classes.formControl}>
-                    <InputLabel shrink id="select-column-label">Column</InputLabel>
+                    <InputLabel /* shrink */ id="select-column-label">Column</InputLabel>
                     <Select
                         labelId="select-column-label"
+                        label="Column"
                         multiple={false}
                         contentEditable={false}
                         value={fileUploadState == null ? -1 : fileUploadState.selectedHeader}
