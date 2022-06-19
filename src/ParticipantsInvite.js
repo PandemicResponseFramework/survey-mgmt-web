@@ -124,6 +124,7 @@ export default function InviteParticipants() {
   }
 
   const onChangeSearchFor = (event) => {
+    setPage(1);
     setLoadingState({
       ...loadingState,
       searchData: event.target.value === "" ? null : loadingState.data.filter(entry => entry.email.includes(event.target.value)),
