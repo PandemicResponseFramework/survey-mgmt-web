@@ -1,5 +1,4 @@
-//import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
-import { Box, Button, Fade, Grid, LinearProgress, TextField, InputAdornment, Pagination } from '@mui/material';
+import { Box, Button, Fab, Tooltip, Fade, Grid, LinearProgress, TextField, InputAdornment, Pagination, Paper, TableContainer, Table, TableRow, TableHead, TableBody, TableCell } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -9,95 +8,59 @@ import SearchIcon from '@mui/icons-material/Search';
 import Axios from 'axios';
 import React, { useEffect } from 'react';
 import { binaryFind, insert, useInterval } from './Utils';
+import { styled } from '@mui/material/styles';
 
 const useStyles = makeStyles()((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  loading: {
-    marginTop: 10,
-  },
   container: {
     '& > div': {
       display: 'flex',
       alignItems: 'flex-end'
     }
   },
-  textField: {
-    flexGrow: 1,
-  },
-  tableTextField: {
-    margin: 0,
-  },
   button: {
     flexGrow: 1,
   },
-  overview: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginTop: 50,
-  },
-  pagination: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  table: {
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
-    overflow: 'none',
-    width: '100%',
-  },
-  head: {
-    display: 'flex',
-    flex: '0 0 auto',
-    height: 46,
-    color: 'black',
-    borderBottom: '1px solid #ccc',
-    padding: '0 5px',
-  },
-  head_row: {
-    display: 'flex',
-    flex: '1 1 auto',
-    textTransform: 'uppercase',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  head_row_item: {
-    display: 'flex',
-    textTransform: 'uppercase',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
-  },
-  body: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: '1 1 auto',
-    overflowX: 'auto',
-    padding: '0 5px',
-  },
-  body_row: {
-    display: 'flex',
-    flex: '0 0 auto',
-    borderBottom: '1px solid #eee',
-  },
-  body_row_item: {
-    display: 'flex',
-    height: 46,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: '0 10px',
-    fontSize: '14px',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-  }
 }));
+
+const Root = styled("div")`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+`;
+const Fader = styled(Fade)`
+  margin-top: 10px;
+`;
+const TableButton = styled(Fab)`
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+`;
+const TableGrid = styled(Grid)`
+  & .MuiGrid-item {
+    padding-top: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 2px;
+    padding-right: 10px;
+  };
+  margin: 0;
+`;
+const Overview = styled("div")`
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+const GrowingTextField = styled(TextField)`
+  flex-grow: 1;
+  width: 100%;
+`;
+const Pager = styled(Pagination)`
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
 
 export default function InviteParticipants() {
 
@@ -227,77 +190,18 @@ export default function InviteParticipants() {
     };
   }, []);
 
-  const columns = [
-    { label: 'email', sortField: 'email', isLocked: true },
-    { label: 'state', sortField: 'state', isLocked: true },
-    { label: 'confirmation token', sortField: 'confirmation', isLocked: true },
-    { label: 'actions', sortField: 'actions', isLocked: true },
-  ];
-
   const data = loadingState.searchData == null ? loadingState.data : loadingState.searchData;
   const countPages = Math.ceil(data.length / rowsPerPage);
 
-  function fieldReducer(fieldValue, fieldName, row) {
-    switch (fieldName) {
-      case 'state':
-        return (
-          fieldValue === 'ERROR'
-            ? <Box color="error.main" style={{ fontWeight: 'bold' }}>{fieldValue}</Box>
-            : <Box color="success.main" style={{ fontWeight: 'bold' }}>{fieldValue}</Box>
-        );
-      case 'actions':
-        return (
-          <Grid container spacing={1} className={classes.container}>
-            <Grid item xs>
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={false}
-                startIcon={<PersonAddIcon />}
-                className={classes.button}
-                onClick={() => onStartInvite(row.email, true)}>
-                Resend
-            </Button>
-            </Grid>
-            <Grid item xs>
-              <Button
-                variant="contained"
-                color="secondary"
-                disabled={false}
-                startIcon={<DeleteIcon />}
-                className={classes.button}
-                onClick={() => onDelete(row.email)}>
-                Delete
-            </Button>
-            </Grid>
-          </Grid>
-        );
-      case 'confirmation':
-        return (
-          <TextField
-            variant="outlined"
-            className={cx(classes.textField, classes.tableTextField)}
-            disabled={loadingState.delay != null}
-            placeholder="Enter Token"
-            onChange={(event) => onChangeConfirmationToken(event, row.email)}
-            value={confirmationTokens[row.email]}
-          />
-        );
-      default:
-        return fieldValue;
-    }
-  }
-
   return (
-    <div className={classes.root}>
+    <Root>
       <div>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={9}>
-            <TextField
+            <GrowingTextField
               label="Type the email address of the participant to invite"
               value={email}
               onChange={onChangeEmail}
-              className={classes.textField}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -321,11 +225,10 @@ export default function InviteParticipants() {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={9}>
-            <TextField
+            <GrowingTextField
               label="Search for email address"
               value={loadingState.searchFor}
               onChange={onChangeSearchFor}
-              className={classes.textField}
               disabled={loadingState.delay != null}
               InputProps={{
                 startAdornment: (
@@ -350,64 +253,88 @@ export default function InviteParticipants() {
         </Grid>
       </div>
 
-      <div className={classes.overview}>
+      <Overview>
 
-        <Fade in={loadingState.delay != null} className={classes.loading}>
+        <Fader in={loadingState.delay != null}>
           <LinearProgress />
-        </Fade>
+        </Fader>
 
-        <div className={classes.tableContainer}>
-          <Pagination
+        <div>
+          <Pager
             count={countPages}
             page={page}
             onChange={onPageChange}
-            className={classes.pagination}
             color="primary"
             showFirstButton showLastButton
           />
-          {/* <DataBrowser
-            initialColumnFlex={['0 0 35%', '0 0 10%', '0 0 25%', '0 0 30%']}
-            columns={columns}
-          >
-            {
-              ({ columnFlex, visibleColumns }) => (
-                <div className={classes.table}>
-                  <div className={classes.head}>
-                    <div className={classes.head_row}>
-                      {visibleColumns.map((cell, index) => (
-                        <div
-                          key={index}
-                          className={classes.head_row_item}
-                          style={{ flex: columnFlex[index] }}
-                        >
-                          {cell.label}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className={classes.body}>
-                    {data.slice((page - 1) * rowsPerPage, Math.min((page) * rowsPerPage, data.length)).map((row, key) => (
-                      <div key={key} className={classes.body_row}>
-                        {visibleColumns.map(({ label, sortField }, index) => (
-                          <div
-                            key={sortField}
-                            className={classes.body_row_item}
-                            style={{ flex: columnFlex[index] }}
-                          >
-                            {
-                              fieldReducer(getObjectPropertyByString(row, sortField), sortField, row)
-                            }
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            }
-          </DataBrowser> */}
+
+          <TableContainer component={Paper}>
+            <Table stickyHeader sx={{ minWidth: 650 }} size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>E-Mail</TableCell>
+                  <TableCell>State</TableCell>
+                  <TableCell>Confirmation Token</TableCell>
+                  <TableCell style={{width: 120}}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.slice((page - 1) * rowsPerPage, Math.min((page) * rowsPerPage, data.length)).map((data) => (
+                  <TableRow
+                    key={data.id}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">{data.email}</TableCell>
+                    <TableCell>
+                      {data.state !== 'VERIFIED'
+                        ? <Box color="error.main" style={{ fontWeight: 'bold' }}>{data.state}</Box>
+                        : <Box color="success.main" style={{ fontWeight: 'bold' }}>{data.state}</Box>
+                      }
+                    </TableCell>
+                    <TableCell>
+                      <GrowingTextField
+                        variant="outlined"
+                        disabled={loadingState.delay != null}
+                        placeholder="Enter Token"
+                        onChange={(event) => onChangeConfirmationToken(event, data.email)}
+                        value={confirmationTokens[data.email]}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TableGrid container spacing={1}>
+                        <Grid item xs={6}>
+                          <Tooltip title="Re-Invite Participant">
+                            <TableButton 
+                              size="small" 
+                              color="primary"
+                              disabled={false} 
+                              aria-label="new-release" 
+                              onClick={() => onStartInvite(data.email, true)}>
+                              <PersonAddIcon />
+                            </TableButton>
+                          </Tooltip>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Tooltip title="Delete Participant">
+                            <TableButton 
+                              size="small" 
+                              color="error" 
+                              disabled={false} 
+                              aria-label="new-release" 
+                              onClick={() => onDelete(data.email)}>
+                              <DeleteIcon />
+                            </TableButton>
+                          </Tooltip>
+                        </Grid>
+                      </TableGrid>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
-      </div>
-    </div>
+      </Overview>
+    </Root>
   );
 }

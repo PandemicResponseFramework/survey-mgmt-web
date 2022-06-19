@@ -1,3 +1,4 @@
+import { blue, blueGrey, lightBlue } from '@mui/material/colors';
 import { createTheme } from '@mui/material/styles';
 
 // Theme setup
@@ -15,7 +16,7 @@ export const customTheme = createTheme({
           styleOverrides: {
               root: {
                   '& input': {
-                      padding: 6,
+                      padding: 10,
                   }
               }
           }
@@ -24,18 +25,41 @@ export const customTheme = createTheme({
           styleOverrides: {
               root: {
                   '& div.MuiSelect-select': {
-                      padding: 6,
+                      padding: 10,
                   }
               }
           }
       },
       MuiGrid: {
         styleOverrides: {
+          root: {
+            alignItems: 'center',
+          },
           item: {
             marginTop: 4,
             marginBottom: 4,
           }
         }
-      }
+      },
+      MuiTableHead: {
+        styleOverrides: {
+            root: {
+                '& th.MuiTableCell-head': {
+                    fontWeight: 'bold',
+                    backgroundColor: blue[100],
+                }
+            }
+        }
+      },
+      MuiTableBody: {
+        styleOverrides: {
+            root: {
+                '& td.MuiTableCell-body': {
+                    paddingTop: 1,
+                    paddingBottom: 1,
+                }
+            }
+        }
+      },
   }
 });

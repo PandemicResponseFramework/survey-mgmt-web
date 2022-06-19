@@ -1,4 +1,4 @@
-import { Box, Button, Fade, Grid, LinearProgress, IconButton, Tooltip, Paper, TableContainer, Table, TableRow, TableHead, TableBody, TableCell } from '@mui/material';
+import { Box, Button, Fade, Grid, LinearProgress, Fab, Tooltip, Paper, TableContainer, Table, TableRow, TableHead, TableBody, TableCell } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AddIcon from '@mui/icons-material/Add';
@@ -21,15 +21,18 @@ const Root = styled("div")`
 const Fader = styled(Fade)`
   margin-top: 10px;
 `;
-const TableButton = styled(IconButton)`
+const TableButton = styled(Fab)`
   margin: 0;
   padding: 0;
+  box-shadow: none;
 `;
 const TableGrid = styled(Grid)`
   & .MuiGrid-item {
     padding-top: 0;
     margin-top: 0;
     margin-bottom: 0;
+    padding-left: 2px;
+    padding-right: 10px;
   };
   margin: 0;
 `;
@@ -148,7 +151,7 @@ export default function SurveyOverview({callback}) {
         </Fader>
 
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+          <Table sx={{ minWidth: 650 }} size="small">
             <TableHead>
               <TableRow>
                 <TableCell>NameId</TableCell>
@@ -157,7 +160,7 @@ export default function SurveyOverview({callback}) {
                 <TableCell>Version</TableCell>
                 <TableCell>Active</TableCell>
                 <TableCell>Interval Start</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell style={{width: 160}}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -187,14 +190,14 @@ export default function SurveyOverview({callback}) {
                       <Grid item xs={4}>
                         {data.releaseStatus === 'RELEASED' && !data.editable && data.isLatestRelease &&
                           <Tooltip title="New version">
-                            <TableButton size="medium" color="primary" aria-label="new-release" onClick={() => onCreateNewVersion(data.id)}>
+                            <TableButton size="small" color="primary" aria-label="new-release" onClick={() => onCreateNewVersion(data.id)}>
                               <NewReleasesIcon />
                             </TableButton>
                           </Tooltip>
                         }
                         {data.releaseStatus !== 'RELEASED' &&
                           <Tooltip title="Edit survey">
-                            <TableButton size="medium" color="primary" aria-label="edit" onClick={(event) => callback({view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id})}>
+                            <TableButton size="small" color="primary" aria-label="edit" onClick={(event) => callback({view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id})}>
                               <EditIcon />
                             </TableButton>
                           </Tooltip>
@@ -202,7 +205,7 @@ export default function SurveyOverview({callback}) {
                       </Grid>
                       <Grid item xs={4}>
                         <Tooltip title="View survey">
-                          <TableButton size="medium" color="primary" aria-label="view" disabled={true}>
+                          <TableButton size="small" color="primary" aria-label="view" disabled={true}>
                             <VisibilityIcon />
                           </TableButton>
                         </Tooltip>
@@ -210,7 +213,7 @@ export default function SurveyOverview({callback}) {
                       <Grid item xs={4}>
                         {data.releaseStatus !== 'RELEASED' &&
                           <Tooltip title="Delete survey">
-                            <TableButton size="medium" color="secondary" aria-label="edit">
+                            <TableButton size="small" color="error" aria-label="edit">
                               <DeleteIcon />
                             </TableButton>
                           </Tooltip>
