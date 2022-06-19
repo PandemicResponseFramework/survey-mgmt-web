@@ -15,12 +15,6 @@ const Root = styled("div")`
   width: 100%;
   justify-content: space-between;
 `;
-const MainGrid = styled(Grid)`
-  '& > div': {
-    display: 'flex',
-    alignItems: 'flex-end'
-  }
-`;
 const Fader = styled(Fade)`
   margin-top: 10px;
 `;
