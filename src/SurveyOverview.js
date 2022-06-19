@@ -1,6 +1,4 @@
-//import DataBrowser, { getObjectPropertyByString } from '@alekna/react-data-browser';
-import { Box, Button, Fade, Grid, LinearProgress, IconButton, Tooltip } from '@mui/material';
-import { makeStyles } from 'tss-react/mui';
+import { Box, Button, Fade, Grid, LinearProgress, IconButton, Tooltip, Paper, TableContainer, Table, TableRow, TableHead, TableBody, TableCell } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AddIcon from '@mui/icons-material/Add';
@@ -12,80 +10,31 @@ import { useInterval } from './Utils';
 import {ReleaseStatusTypes, ManagementViewTypes} from './Constants';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
 import { format } from 'date-fns';
+import { styled } from '@mui/material/styles';
 
-const useStyles = makeStyles()((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  loading: {
-    marginTop: 10,
-  },
-  button: {
-    flexGrow: 1,
-  },
-  action: {
-    width: '100%',
-  },
-  table: {
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
-    overflow: 'none',
-    width: '100%',
-  },
-  head: {
-    display: 'flex',
-    flex: '0 0 auto',
-    height: 46,
-    color: 'black',
-    borderBottom: '1px solid #ccc',
-    padding: '0 5px',
-  },
-  head_row: {
-    display: 'flex',
-    flex: '1 1 auto',
-    textTransform: 'uppercase',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  head_row_item: {
-    display: 'flex',
-    textTransform: 'uppercase',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
-  },
-  body: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: '1 1 auto',
-    overflowX: 'auto',
-    padding: '0 5px',
-  },
-  body_row: {
-    display: 'flex',
-    flex: '0 0 auto',
-    borderBottom: '1px solid #eee',
-  },
-  body_row_item: {
-    display: 'flex',
-    height: 46,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: '0 10px',
-    fontSize: '14px',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-  }
-}));
+const Root = styled("div")`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+`;
+const Fader = styled(Fade)`
+  margin-top: 10px;
+`;
+const TableButton = styled(IconButton)`
+  margin: 0;
+  padding: 0;
+`;
+const TableGrid = styled(Grid)`
+  & .MuiGrid-item {
+    padding-top: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  };
+  margin: 0;
+`;
 
 export default function SurveyOverview({callback}) {
-
-  const { classes } = useStyles();
 
   const [loadingState, setLoadingState] = React.useState({
     data: [],
@@ -154,8 +103,6 @@ export default function SurveyOverview({callback}) {
 
   const data = prepare();
 
-  console.log(data);
-
   const onCreateNewVersion = (surveyId) => {
     Axios.post('/manage/survey/' + surveyId + '/version')
     .then(function (response) {
@@ -178,81 +125,8 @@ export default function SurveyOverview({callback}) {
       })
   };
 
-  const columns = [
-    { label: 'NameId', sortField: 'nameId', isLocked: true },
-    { label: 'Depends On', sortField: 'dependsOn', isLocked: true },
-    { label: 'Status', sortField: 'releaseStatus', isLocked: true },
-    { label: 'Version', sortField: 'version', isLocked: true },
-    { label: 'Active', sortField: 'active', isLocked: true},
-    { label: 'Interval Start', sortField: 'intervalStart', isLocked: true},
-    { label: 'Actions', sortField: 'actions', isLocked: true },
-  ];
-
-  function fieldReducer(fieldValue, fieldName, data) {
-    switch (fieldName) {
-      case 'releaseStatus':
-        return (
-          fieldValue === 'RELEASED'
-            ? <Box color="success.main" style={{ fontWeight: 'bold' }}>{fieldValue}</Box>
-            : <Box color="warning.light" style={{ fontWeight: 'bold' }}>{fieldValue}</Box>
-        );
-      case 'intervalStart':
-        return (
-          fieldValue ? format(new Date(fieldValue), 'dd-MM-yyyy HH:mm O') : 'NONE'
-        );
-      case 'active':
-        return (
-          data.releaseStatus === 'RELEASED' && (data.intervalStart == null || new Date(data.intervalStart).getTime() <= Date.now())
-            ? <Box color="success.main" style={{ fontWeight: 'bold' }}>YES</Box>
-            : <Box color="warning.light" style={{ fontWeight: 'bold' }}>NO</Box>
-        );
-      case 'actions':
-        return (
-          <Grid container spacing={1} className={classes.container}>
-            <Grid item xs={4}>
-              {data.releaseStatus === 'RELEASED' && !data.editable && data.isLatestRelease &&
-                <Tooltip title="New version">
-                  <IconButton size="medium" color="primary" aria-label="new-release" onClick={() => onCreateNewVersion(data.id)}>
-                    <NewReleasesIcon />
-                  </IconButton>
-                </Tooltip>
-              }
-              {data.releaseStatus !== 'RELEASED' &&
-                <Tooltip title="Edit survey">
-                  <IconButton size="medium" color="primary" aria-label="edit" onClick={(event) => callback({view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id})}>
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-              }
-            </Grid>
-            <Grid item xs={4}>
-              <Tooltip title="View survey">
-                <IconButton size="medium" color="primary" aria-label="view" disabled={true}>
-                  <VisibilityIcon />
-                </IconButton>
-              </Tooltip>
-            </Grid>
-            <Grid item xs={4}>
-              {data.releaseStatus !== 'RELEASED' &&
-                <Tooltip title="Delete survey">
-                  <IconButton size="medium" color="secondary" aria-label="edit">
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              }
-            </Grid>
-          </Grid>
-        );
-      case 'version':
-        return fieldValue + 1;
-      default:
-        return fieldValue;
-    }
-  }
-
   return (
-    <div className={classes.root}>
-      
+    <Root>
       {surveyMetaDialogSetup &&
         <EditSurveyMetaDataDialog callbackHandleClose={onCreateSurvey}/>
       }
@@ -263,62 +137,93 @@ export default function SurveyOverview({callback}) {
           color="primary"
           disabled={false}
           startIcon={<AddIcon />}
-          className={classes.button}
           onClick={() => onCreateSurvey(true)}>
           New Survey
         </Button>
       </div>
 
-      <div className={classes.overview}>
-
-        <Fade in={loadingState.delay != null} className={classes.loading}>
+      <div>
+        <Fader in={loadingState.delay != null}>
           <LinearProgress />
-        </Fade>
+        </Fader>
 
-        {/* <div className={classes.tableContainer}>
-          <DataBrowser
-            initialColumnFlex={['0 0 15%', '0 0 15%', '0 0 10%', '0 0 10%', '0 0 10%', '0 0 20%', '0 0 20%']}
-            columns={columns}
-          >
-            {
-              ({ columnFlex, visibleColumns }) => (
-                <div className={classes.table}>
-                  <div className={classes.head}>
-                    <div className={classes.head_row}>
-                      {visibleColumns.map((cell, index) => (
-                        <div
-                          key={index}
-                          className={classes.head_row_item}
-                          style={{ flex: columnFlex[index] }}
-                        >
-                          {cell.label}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className={classes.body}>
-                    {data.map((row, key) => (
-                      <div key={key} className={classes.body_row}>
-                        {visibleColumns.map(({ label, sortField }, index) => (
-                          <div
-                            key={sortField}
-                            className={classes.body_row_item}
-                            style={{ flex: columnFlex[index] }}
-                          >
-                            {
-                              fieldReducer(getObjectPropertyByString(row, sortField), sortField, row)
-                            }
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            }
-          </DataBrowser>
-        </div> */}
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>NameId</TableCell>
+                <TableCell>Depends On</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Version</TableCell>
+                <TableCell>Active</TableCell>
+                <TableCell>Interval Start</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.map((data) => (
+                <TableRow
+                  key={data.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">{data.nameId}</TableCell>
+                  <TableCell>{data.dependsOn}</TableCell>
+                  <TableCell>
+                    {data.releaseStatus === 'RELEASED'
+                      ? <Box color="success.main" style={{ fontWeight: 'bold' }}>{data.releaseStatus}</Box>
+                      : <Box color="warning.light" style={{ fontWeight: 'bold' }}>{data.releaseStatus}</Box>
+                      }
+                  </TableCell>
+                  <TableCell>{data.version + 1}</TableCell>
+                  <TableCell>
+                    {data.releaseStatus === 'RELEASED' && (data.intervalStart == null || new Date(data.intervalStart).getTime() <= Date.now())
+                      ? <Box color="success.main" style={{ fontWeight: 'bold' }}>YES</Box>
+                      : <Box color="warning.light" style={{ fontWeight: 'bold' }}>NO</Box>
+                    }
+                  </TableCell>
+                  <TableCell>{data.intervalStart ? format(new Date(data.intervalStart), 'dd-MM-yyyy HH:mm O') : 'NONE'}</TableCell>
+                  <TableCell>
+                    <TableGrid container spacing={1}>
+                      <Grid item xs={4}>
+                        {data.releaseStatus === 'RELEASED' && !data.editable && data.isLatestRelease &&
+                          <Tooltip title="New version">
+                            <TableButton size="medium" color="primary" aria-label="new-release" onClick={() => onCreateNewVersion(data.id)}>
+                              <NewReleasesIcon />
+                            </TableButton>
+                          </Tooltip>
+                        }
+                        {data.releaseStatus !== 'RELEASED' &&
+                          <Tooltip title="Edit survey">
+                            <TableButton size="medium" color="primary" aria-label="edit" onClick={(event) => callback({view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id})}>
+                              <EditIcon />
+                            </TableButton>
+                          </Tooltip>
+                        }
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Tooltip title="View survey">
+                          <TableButton size="medium" color="primary" aria-label="view" disabled={true}>
+                            <VisibilityIcon />
+                          </TableButton>
+                        </Tooltip>
+                      </Grid>
+                      <Grid item xs={4}>
+                        {data.releaseStatus !== 'RELEASED' &&
+                          <Tooltip title="Delete survey">
+                            <TableButton size="medium" color="secondary" aria-label="edit">
+                              <DeleteIcon />
+                            </TableButton>
+                          </Tooltip>
+                        }
+                      </Grid>
+                    </TableGrid>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
-    </div>
+    </Root>
   );
 }
