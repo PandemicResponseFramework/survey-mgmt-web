@@ -17,6 +17,12 @@ export const customTheme = createTheme({
               root: {
                   '& input': {
                       padding: 10,
+                  },
+                  '& label.MuiInputLabel-root': {
+                    transform: 'translate(14px, 10px) scale(1)',
+                  },
+                  '& label.MuiInputLabel-root[data-shrink=true]': {
+                    transform: 'translate(14px, -9px) scale(0.75)',
                   }
               }
           }
