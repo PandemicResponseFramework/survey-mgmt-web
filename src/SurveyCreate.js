@@ -2,7 +2,6 @@ import { Button, Grid, TextField, Select, MenuItem, Checkbox, Fade, LinearProgre
 import { makeStyles } from 'tss-react/mui';
 import React, { useEffect } from 'react';
 import { DateTimePicker } from '@mui/x-date-pickers';
-import DateFnsUtils from '@date-io/date-fns';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
 import {isPositiveInteger, useInterval} from './Utils';
@@ -326,17 +325,15 @@ export default function SurveyCreate({callback}) {
               </Select>
               
               <span>starting at</span>
-              
+
               <DateTimePicker
-                margin="normal"
-                id="interval-start-dialog"
+                label="From"
                 format="dd-MM-yyyy HH:mm"
                 onChange={onChangeIntervalStart}
                 value={surveyData.intervalStart}
                 error={errors.intervalStart}
-                KeyboardButtonProps={{
-                  'aria-label': 'change date',
-                }} />
+                renderInput={(params) => <TextField {...params} />}
+              />
             </div>
           }
         </Grid>
