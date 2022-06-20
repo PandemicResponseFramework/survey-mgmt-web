@@ -2,14 +2,14 @@ import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 import SurveyOverview from './SurveyOverview';
 import SurveyEdit from './SurveyEdit';
-import {ManagementViewTypes} from './Constants'
+import { ManagementViewTypes } from './Constants'
 
 const useStyles = makeStyles()((theme) => ({
     root: {
-      display: 'flex',
-      flexDirection: 'column',
-      width: '100%',
-      justifyContent: 'space-between',
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        justifyContent: 'space-between',
     }
 }));
 
@@ -25,7 +25,8 @@ export default function SurveyComponent() {
     const updateView = (data) => {
 
         const newView = data.view || ManagementViewTypes.SURVEY_OVERVIEW;
-        setState({...state,
+        setState({
+            ...state,
             view: newView,
             surveyId: data.surveyId
         });
@@ -34,10 +35,10 @@ export default function SurveyComponent() {
     return (
         <div className={classes.root}>
             {state.view === ManagementViewTypes.SURVEY_OVERVIEW &&
-                <SurveyOverview callback={updateView}/>
+                <SurveyOverview callback={updateView} />
             }
             {state.view === ManagementViewTypes.SURVEY_EDIT &&
-                <SurveyEdit callback={updateView} surveyId={state.surveyId}/>
+                <SurveyEdit callback={updateView} surveyId={state.surveyId} />
             }
         </div>
     );

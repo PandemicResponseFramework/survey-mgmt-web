@@ -18,7 +18,7 @@ export function useInterval(callback, delay) {
             id = setInterval(tick, delay);
         return () => {
             if (id != null)
-              clearInterval(id);
+                clearInterval(id);
         }
     }, [delay]);
 }
@@ -67,15 +67,15 @@ export function insert(index, newItem, arr) {
 export function isPositiveInteger(str) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-           !isNaN(parseFloat(str)) && // ...and ensure strings of whitespace fail
-           !str.includes(".") && // and ensure it is an integer
-           !str.startsWith("0") &&
-           !str.startsWith("-")
+        !isNaN(parseFloat(str)) && // ...and ensure strings of whitespace fail
+        !str.includes(".") && // and ensure it is an integer
+        !str.startsWith("0") &&
+        !str.startsWith("-")
 };
 
 export function isInteger(str) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-           !isNaN(parseFloat(str)) && // ...and ensure strings of whitespace fail
-           !str.includes(".") // and ensure it is an integer
+        !isNaN(parseFloat(str)) && // ...and ensure strings of whitespace fail
+        !str.includes(".") // and ensure it is an integer
 };

@@ -7,7 +7,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import Axios from 'axios';
 import React, { useEffect } from 'react';
 import { useInterval } from './Utils';
-import {ReleaseStatusTypes, ManagementViewTypes} from './Constants';
+import { ReleaseStatusTypes, ManagementViewTypes } from './Constants';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
 import { styled } from '@mui/material/styles';
 import { DateTime } from "luxon";
@@ -37,7 +37,7 @@ const TableGrid = styled(Grid)`
   margin: 0;
 `;
 
-export default function SurveyOverview({callback}) {
+export default function SurveyOverview({ callback }) {
 
   const [loadingState, setLoadingState] = React.useState({
     data: [],
@@ -79,9 +79,9 @@ export default function SurveyOverview({callback}) {
       return [];
 
     const result = [...loadingState.data];
-    
+
     result.forEach(element => {
-      
+
       let highestReleasedVersion = -1;
 
       result.forEach(inner => {
@@ -92,7 +92,7 @@ export default function SurveyOverview({callback}) {
           // Collect latest release version
           if (inner.releaseStatus === ReleaseStatusTypes.RELEASED && inner.version > highestReleasedVersion)
             highestReleasedVersion = inner.version;
-        } 
+        }
       });
 
       if (element.releaseStatus === ReleaseStatusTypes.RELEASED && element.version === highestReleasedVersion)
@@ -108,14 +108,14 @@ export default function SurveyOverview({callback}) {
 
   const onCreateNewVersion = (surveyId) => {
     Axios.post('/manage/survey/' + surveyId + '/version')
-    .then(function (response) {
-      setLoadingState({
-        ...loadingState,
-        delay: 500,
+      .then(function (response) {
+        setLoadingState({
+          ...loadingState,
+          delay: 500,
+        });
+      }).catch(function (error) {
+        // do nothing
       });
-    }).catch(function (error) {
-      // do nothing
-    });
   };
 
   const onCreateSurvey = (show, gotEdited) => {
@@ -131,7 +131,7 @@ export default function SurveyOverview({callback}) {
   return (
     <Root>
       {surveyMetaDialogSetup &&
-        <EditSurveyMetaDataDialog callbackHandleClose={onCreateSurvey}/>
+        <EditSurveyMetaDataDialog callbackHandleClose={onCreateSurvey} />
       }
 
       <div>
@@ -160,7 +160,7 @@ export default function SurveyOverview({callback}) {
                 <TableCell>Version</TableCell>
                 <TableCell>Active</TableCell>
                 <TableCell>Interval Start</TableCell>
-                <TableCell style={{width: 160}}>Actions</TableCell>
+                <TableCell style={{ width: 160 }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -175,7 +175,7 @@ export default function SurveyOverview({callback}) {
                     {data.releaseStatus === 'RELEASED'
                       ? <Box color="success.main" style={{ fontWeight: 'bold' }}>{data.releaseStatus}</Box>
                       : <Box color="warning.light" style={{ fontWeight: 'bold' }}>{data.releaseStatus}</Box>
-                      }
+                    }
                   </TableCell>
                   <TableCell>{data.version + 1}</TableCell>
                   <TableCell>
@@ -197,7 +197,7 @@ export default function SurveyOverview({callback}) {
                         }
                         {data.releaseStatus !== 'RELEASED' &&
                           <Tooltip title="Edit survey">
-                            <TableButton size="small" color="primary" aria-label="edit" onClick={(event) => callback({view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id})}>
+                            <TableButton size="small" color="primary" aria-label="edit" onClick={(event) => callback({ view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id })}>
                               <EditIcon />
                             </TableButton>
                           </Tooltip>

@@ -79,14 +79,14 @@ export default function InviteParticipants() {
 
   const onChangeConfirmationToken = (event, email) => {
     setConfirmationTokens({
-      ...confirmationTokens, 
+      ...confirmationTokens,
       [email]: event.target.value,
     });
   }
 
   const onStartInvite = (email, isReinvitation) => {
 
-    const data = {email: email};
+    const data = { email: email };
     if (isReinvitation && confirmationTokens[email])
       data.confirmationToken = confirmationTokens[email];
 
@@ -105,22 +105,22 @@ export default function InviteParticipants() {
         }, loadingState.data),
       });
     }).catch(function (error) {
-    // ignore
+      // ignore
     });
   };
 
   const onDelete = (email) => {
     Axios.delete("/manage/participant?email=" + encodeURIComponent(email))
-    .then(response => {
-      setLoadingState({
-        ...loadingState,
-        data: [],
-        startIndex: 0,
-        delay: 500,
+      .then(response => {
+        setLoadingState({
+          ...loadingState,
+          data: [],
+          startIndex: 0,
+          delay: 500,
+        });
+      }).catch(function (error) {
+        // ignore
       });
-    }).catch(function (error) {
-    // ignore
-    });
   }
 
   const onChangeSearchFor = (event) => {
@@ -210,7 +210,7 @@ export default function InviteParticipants() {
               startIcon={<PersonAddIcon />}
               onClick={() => onStartInvite(email)}>
               Invite
-          </GrowingButton>
+            </GrowingButton>
           </Grid>
           <Grid item xs={9}>
             <GrowingTextField
@@ -235,7 +235,7 @@ export default function InviteParticipants() {
               startIcon={<RefreshIcon />}
               onClick={onRefresh}>
               Refresh
-          </GrowingButton>
+            </GrowingButton>
           </Grid>
         </Grid>
       </div>
@@ -262,7 +262,7 @@ export default function InviteParticipants() {
                   <TableCell>E-Mail</TableCell>
                   <TableCell>State</TableCell>
                   <TableCell>Confirmation Token</TableCell>
-                  <TableCell style={{width: 120}}>Actions</TableCell>
+                  <TableCell style={{ width: 120 }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -291,11 +291,11 @@ export default function InviteParticipants() {
                       <TableGrid container spacing={1}>
                         <Grid item xs={6}>
                           <Tooltip title="Re-Invite Participant">
-                            <TableButton 
-                              size="small" 
+                            <TableButton
+                              size="small"
                               color="primary"
-                              disabled={false} 
-                              aria-label="new-release" 
+                              disabled={false}
+                              aria-label="new-release"
                               onClick={() => onStartInvite(data.email, true)}>
                               <PersonAddIcon />
                             </TableButton>
@@ -303,11 +303,11 @@ export default function InviteParticipants() {
                         </Grid>
                         <Grid item xs={6}>
                           <Tooltip title="Delete Participant">
-                            <TableButton 
-                              size="small" 
-                              color="error" 
-                              disabled={false} 
-                              aria-label="new-release" 
+                            <TableButton
+                              size="small"
+                              color="error"
+                              disabled={false}
+                              aria-label="new-release"
                               onClick={() => onDelete(data.email)}>
                               <DeleteIcon />
                             </TableButton>

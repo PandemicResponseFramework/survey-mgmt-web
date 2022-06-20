@@ -21,52 +21,52 @@ import CallSplitIcon from '@mui/icons-material/CallSplit';
 import EditQuestionDialog from './EditQuestionDialog';
 import EditConditionDialog from './EditConditionDialog';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
-import {QuestionTypes, ReleaseStatusTypes, ManagementViewTypes} from './Constants';
+import { QuestionTypes, ReleaseStatusTypes, ManagementViewTypes } from './Constants';
 
 const useStyles = makeStyles()((theme) => ({
-    root: {
-      display: 'flex',
-      flexDirection: 'column',
-      width: '100%',
-      justifyContent: 'space-between',
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    buttons: {
-      display: 'flex',
-      flexDirection: 'row',
-    },
-    action: {
-      marginRight: theme.spacing(1),
-    },
-    loading: {
-      marginTop: 10,
-    },
-    nodeTitle: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    nodeTitleItem: {
-      marginRight: 5,
-    },
-    treeView: {
-      height: 'calc(100vh - 170px)',
-    },
-    surveyTitle: {
-      fontWeight: 'normal',
-    },
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  buttons: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  action: {
+    marginRight: theme.spacing(1),
+  },
+  loading: {
+    marginTop: 10,
+  },
+  nodeTitle: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  nodeTitleItem: {
+    marginRight: 5,
+  },
+  treeView: {
+    height: 'calc(100vh - 170px)',
+  },
+  surveyTitle: {
+    fontWeight: 'normal',
+  },
 }));
 
-export default function SurveyEdit({callback, surveyId}) {
+export default function SurveyEdit({ callback, surveyId }) {
 
   const { classes } = useStyles();
 
   const [loadingState, setLoadingState] = React.useState({
-      data: [],
-      delay: 500,
-    });
+    data: [],
+    delay: 500,
+  });
 
   const [treeData, setTreeData] = React.useState([]);
 
@@ -156,7 +156,7 @@ export default function SurveyEdit({callback, surveyId}) {
 
   const onReleaseSurvey = () => {
     Axios.post('/manage/survey/' + surveyId + '/release').then(function (response) {
-      callback({view: ManagementViewTypes.SURVEY_OVERVIEW});
+      callback({ view: ManagementViewTypes.SURVEY_OVERVIEW });
     }).catch(function (error) {
       console.log(error);
     });
@@ -234,8 +234,8 @@ export default function SurveyEdit({callback, surveyId}) {
     const result = [{
       id: survey.id,
       title: createSurveyNodeTitle(survey),
-      children: children, 
-      expanded: true, 
+      children: children,
+      expanded: true,
     }];
 
     if (survey.questions) {
@@ -257,34 +257,34 @@ export default function SurveyEdit({callback, surveyId}) {
       return;
 
     questions.forEach(question => {
-        const condition = [];
+      const condition = [];
 
-        currentLevel.push({
-          id: question.id,
-          title: createQuestionNodeTitle(question, parentId),
-          children: condition,
-          expanded: checkExpandedState(treeData[0], [question.id, question.previousVersionId]) ||
-            (loadingState.newContainerId &&
-              question.container &&
-              question.container.id === loadingState.newContainerId),
+      currentLevel.push({
+        id: question.id,
+        title: createQuestionNodeTitle(question, parentId),
+        children: condition,
+        expanded: checkExpandedState(treeData[0], [question.id, question.previousVersionId]) ||
+          (loadingState.newContainerId &&
+            question.container &&
+            question.container.id === loadingState.newContainerId),
+      });
+
+      if (question.container) {
+
+        const children = [];
+        condition.push({
+          id: question.container.id,
+          title: createConditionNodeTitle(question),
+          children: children,
+          expanded: checkExpandedState(treeData[0], [question.container.id]) ||
+            (loadingState.newQuestionId &&
+              question.container.subQuestions &&
+              question.container.subQuestions.some(e => e.id === loadingState.newQuestionId)),
         });
-        
-        if (question.container) {
-          
-          const children = [];
-          condition.push({
-            id: question.container.id,
-            title: createConditionNodeTitle(question),
-            children: children,
-            expanded: checkExpandedState(treeData[0], [question.container.id]) || 
-              (loadingState.newQuestionId && 
-                question.container.subQuestions && 
-                question.container.subQuestions.some(e => e.id === loadingState.newQuestionId)),
-          });
 
-          if (question.container.subQuestions)
-            mapData(children, question.container.subQuestions, question.container.id);
-        }
+        if (question.container.subQuestions)
+          mapData(children, question.container.subQuestions, question.container.id);
+      }
     });
   };
 
@@ -320,7 +320,7 @@ export default function SurveyEdit({callback, surveyId}) {
         </Tooltip>
         {survey.releaseStatus === ReleaseStatusTypes.EDIT &&
           <Tooltip title="Changed Item">
-            <NewReleasesIcon style={{color: 'yellowgreen'}} className={classes.nodeTitleItem}/>
+            <NewReleasesIcon style={{ color: 'yellowgreen' }} className={classes.nodeTitleItem} />
           </Tooltip>
         }
         <span>{survey.nameId + ': ' + survey.title}</span>
@@ -349,9 +349,9 @@ export default function SurveyEdit({callback, surveyId}) {
           </Tooltip>
         }
         {question.releaseStatus === ReleaseStatusTypes.EDIT &&
-          <NewReleasesIcon style={{color: 'yellowgreen'}} className={classes.nodeTitleItem}/>
+          <NewReleasesIcon style={{ color: 'yellowgreen' }} className={classes.nodeTitleItem} />
         }
-        <CallSplitIcon color="disabled" style={{transform: 'rotate(90deg)'}} className={classes.nodeTitleItem}/>
+        <CallSplitIcon color="disabled" style={{ transform: 'rotate(90deg)' }} className={classes.nodeTitleItem} />
         <span>Condition</span>
       </div>
     );
@@ -369,29 +369,29 @@ export default function SurveyEdit({callback, surveyId}) {
     let hasCondition = false;
 
     switch (question.type) {
-      case QuestionTypes.CHOICE: 
-        icon = question.multiple 
-          ? <Tooltip title="Multiple Choice question"><CheckBoxIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>
-          : <Tooltip title="Single Choice question"><RadioButtonIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
+      case QuestionTypes.CHOICE:
+        icon = question.multiple
+          ? <Tooltip title="Multiple Choice question"><CheckBoxIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>
+          : <Tooltip title="Single Choice question"><RadioButtonIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
         canHaveChildren = true;
         hasCondition = question.container != null;
         break;
-      case QuestionTypes.TEXT: 
-        icon = <Tooltip title="Text question"><TextIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
+      case QuestionTypes.TEXT:
+        icon = <Tooltip title="Text question"><TextIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
         break;
-      case QuestionTypes.BOOL: 
-        icon = <Tooltip title="Yes/No question"><ToggleIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
+      case QuestionTypes.BOOL:
+        icon = <Tooltip title="Yes/No question"><ToggleIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
         canHaveChildren = true;
         hasCondition = question.container != null;
         break;
-      case QuestionTypes.NUMBER: 
-        icon = <Tooltip title="Numeric question"><NumberIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
+      case QuestionTypes.NUMBER:
+        icon = <Tooltip title="Numeric question"><NumberIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
         break;
-      case QuestionTypes.RANGE: 
-        icon = <Tooltip title="Slider question"><SliderIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
+      case QuestionTypes.RANGE:
+        icon = <Tooltip title="Slider question"><SliderIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
         break;
       case QuestionTypes.CHECKLIST:
-        icon = <Tooltip title="DEPRECATED Checklist question"><ListIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
+        icon = <Tooltip title="DEPRECATED Checklist question"><ListIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
         break;
       default:
     }
@@ -399,36 +399,36 @@ export default function SurveyEdit({callback, surveyId}) {
     const text = question.question;
 
     return (
-        <div className={classes.nodeTitle}>
-          {question.type !== QuestionTypes.CHECKLIST &&
-            <Tooltip title="Edit question">
-              <IconButton size="small" color="primary" aria-label="edit" className={classes.nodeTitleItem} onClick={() => onEditQuestion(parentId, question)}>
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-          }
-          {canHaveChildren === true && !hasCondition &&
-            <Tooltip title="Add condition">
-              <IconButton size="small" color="primary" aria-label="add" className={classes.nodeTitleItem} onClick={() => onEditCondition(question)}>
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
-          }
-          {question.nameId == null && question.container == null &&
-            <Tooltip title="Delete question">
-              <IconButton size="small" color="error" aria-label="delete" className={classes.nodeTitleItem} onClick={() => onDeleteQuestion(question.id)}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          }
-          {question.releaseStatus === ReleaseStatusTypes.EDIT &&
-            <Tooltip title="Changed Item">
-              <NewReleasesIcon style={{color: 'yellowgreen'}} className={classes.nodeTitleItem}/>
-            </Tooltip>
-          }
-          {icon}
-          <span>{text}</span>
-        </div>
+      <div className={classes.nodeTitle}>
+        {question.type !== QuestionTypes.CHECKLIST &&
+          <Tooltip title="Edit question">
+            <IconButton size="small" color="primary" aria-label="edit" className={classes.nodeTitleItem} onClick={() => onEditQuestion(parentId, question)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+        }
+        {canHaveChildren === true && !hasCondition &&
+          <Tooltip title="Add condition">
+            <IconButton size="small" color="primary" aria-label="add" className={classes.nodeTitleItem} onClick={() => onEditCondition(question)}>
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        }
+        {question.nameId == null && question.container == null &&
+          <Tooltip title="Delete question">
+            <IconButton size="small" color="error" aria-label="delete" className={classes.nodeTitleItem} onClick={() => onDeleteQuestion(question.id)}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        }
+        {question.releaseStatus === ReleaseStatusTypes.EDIT &&
+          <Tooltip title="Changed Item">
+            <NewReleasesIcon style={{ color: 'yellowgreen' }} className={classes.nodeTitleItem} />
+          </Tooltip>
+        }
+        {icon}
+        <span>{text}</span>
+      </div>
     );
   };
 
@@ -436,7 +436,7 @@ export default function SurveyEdit({callback, surveyId}) {
     <div className={classes.root}>
 
       {surveyDialogSetup.survey &&
-        <EditSurveyMetaDataDialog survey={surveyDialogSetup.survey} callbackHandleClose={onCloseSurveyMetaDialog}/>
+        <EditSurveyMetaDataDialog survey={surveyDialogSetup.survey} callbackHandleClose={onCloseSurveyMetaDialog} />
       }
 
       <div className={classes.buttons}>
@@ -445,7 +445,7 @@ export default function SurveyEdit({callback, surveyId}) {
           color="primary"
           startIcon={<ArrowBackIcon />}
           className={classes.action}
-          onClick={() => callback({view: ManagementViewTypes.SURVEY_OVERVIEW})}
+          onClick={() => callback({ view: ManagementViewTypes.SURVEY_OVERVIEW })}
         >Back</Button>
 
         <Button
@@ -469,17 +469,17 @@ export default function SurveyEdit({callback, surveyId}) {
         />
       </div>
 
-      {questionDialogSetup && questionDialogSetup.parentId && 
-        <EditQuestionDialog 
+      {questionDialogSetup && questionDialogSetup.parentId &&
+        <EditQuestionDialog
           callbackHandleClose={onCloseQuestionDialog}
-          parentId={questionDialogSetup.parentId} 
-          surveyElement={questionDialogSetup.surveyElement}/>
+          parentId={questionDialogSetup.parentId}
+          surveyElement={questionDialogSetup.surveyElement} />
       }
       {conditionDialogSetup && conditionDialogSetup.question &&
         <EditConditionDialog
           callbackHandleClose={onCloseConditionDialog}
           question={conditionDialogSetup.question}
-          />
+        />
       }
     </div>
   );

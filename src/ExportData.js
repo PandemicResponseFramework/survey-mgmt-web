@@ -65,10 +65,10 @@ export default function ExportData() {
         minDateTime={interval.start}
         onChange={onEndChange}
         error={!interval.valid}
-        renderInput={(params) => 
-          <TextField {...params} 
-          error={!interval.valid} 
-          helperText={interval.valid ? null : "Selected end date/time must be after the selected start date/time"}/>
+        renderInput={(params) =>
+          <TextField {...params}
+            error={!interval.valid}
+            helperText={interval.valid ? null : "Selected end date/time must be after the selected start date/time"} />
         }
       />
       <Button

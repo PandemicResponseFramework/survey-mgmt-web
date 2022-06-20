@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
-import {isPositiveInteger, useInterval} from './Utils';
+import { isPositiveInteger, useInterval } from './Utils';
 import Axios from 'axios';
 import { styled } from '@mui/material/styles';
 
@@ -48,7 +48,7 @@ const GrowingHStack = styled(Stack)`
   width: 100%;
 `;
 
-export default function SurveyCreate({survey, callbackHandleClose}) {
+export default function SurveyCreate({ survey, callbackHandleClose }) {
 
   const { classes } = useStyles();
 
@@ -83,7 +83,7 @@ export default function SurveyCreate({survey, callbackHandleClose}) {
 
   const title = survey == null ? 'Create Survey' : 'Edit Survey';
 
-  const [errors, setErrors] = React.useState({...ERRORS_INIT});
+  const [errors, setErrors] = React.useState({ ...ERRORS_INIT });
 
   const [loadingState, setLoadingState] = React.useState({
     data: [],
@@ -202,7 +202,7 @@ export default function SurveyCreate({survey, callbackHandleClose}) {
   const validateAndSave = (event) => {
 
     // validate
-    const result = {...ERRORS_INIT};
+    const result = { ...ERRORS_INIT };
     let validationFailed = false;
 
     if (!surveyData.nameId) {
@@ -285,94 +285,94 @@ export default function SurveyCreate({survey, callbackHandleClose}) {
 
   return (
     <Dialog open={true} maxWidth="md" fullWidth={true} onClose={() => callbackHandleClose()} aria-labelledby="form-dialog-title">
-    <DialogTitle id="form-dialog-title">{title}</DialogTitle>
-    <DialogContent>
-      <DialogContentText></DialogContentText>
-      <div className={classes.root}>
-        <Fade in={loadingState.delay != null} className={classes.loading}>
-          <LinearProgress />
-        </Fade>
+      <DialogTitle id="form-dialog-title">{title}</DialogTitle>
+      <DialogContent>
+        <DialogContentText></DialogContentText>
+        <div className={classes.root}>
+          <Fade in={loadingState.delay != null} className={classes.loading}>
+            <LinearProgress />
+          </Fade>
 
-        <Grid container spacing={1} className={classes.container}>
-          <Grid item xs={12}>
-            <TextField 
-              label="NameID" 
-              variant="outlined" 
-              className={classes.textField} 
-              onChange={onChangeNameId} 
-              value={surveyData.nameId}
-              error={errors.nameId}
-              disabled={survey != null}/>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField 
-              label="Title" 
-              variant="outlined" 
-              className={classes.textField} 
-              onChange={onChangeTitle} 
-              value={surveyData.title}
-              error={errors.title}/>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField 
-              label="Description" 
-              variant="outlined" 
-              className={classes.textField} 
-              multiline={true} 
-              rows={5} 
-              onChange={onChangeDescription} 
-              value={surveyData.description}/>
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="depends-on-label">Depends on Survey</InputLabel>
-              <Select
-                labelId="depends-on-label"
-                id="depends-on-select"
-                value={surveyData.dependsOn}
-                onChange={onChangeDependsOn}
-                disabled={nameIds==null}
-                label="Depends on Survey">
-                <MenuItem value="-1" key="-1">
-                  <em>None</em>
-                </MenuItem>
-                {nameIds.map((row, key) => (
-                  <MenuItem value={key} key={key}>{row}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} className={classes.inputGrid}>
-            <GrowingHStack direction="row" alignItems="center" spacing={2}>
-              <FormControlLabel
-                label="Repeat survey"
-                  control={<Checkbox 
-                  color="primary" 
-                  onChange={onChangeIntervalEnabled} 
-                  checked={surveyData.intervalEnabled}
-                />}
-                style={{marginRight:0}}
-              />
-            
-              {surveyData.intervalEnabled &&
+          <Grid container spacing={1} className={classes.container}>
+            <Grid item xs={12}>
+              <TextField
+                label="NameID"
+                variant="outlined"
+                className={classes.textField}
+                onChange={onChangeNameId}
+                value={surveyData.nameId}
+                error={errors.nameId}
+                disabled={survey != null} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Title"
+                variant="outlined"
+                className={classes.textField}
+                onChange={onChangeTitle}
+                value={surveyData.title}
+                error={errors.title} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Description"
+                variant="outlined"
+                className={classes.textField}
+                multiline={true}
+                rows={5}
+                onChange={onChangeDescription}
+                value={surveyData.description} />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel id="depends-on-label">Depends on Survey</InputLabel>
+                <Select
+                  labelId="depends-on-label"
+                  id="depends-on-select"
+                  value={surveyData.dependsOn}
+                  onChange={onChangeDependsOn}
+                  disabled={nameIds == null}
+                  label="Depends on Survey">
+                  <MenuItem value="-1" key="-1">
+                    <em>None</em>
+                  </MenuItem>
+                  {nameIds.map((row, key) => (
+                    <MenuItem value={key} key={key}>{row}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} className={classes.inputGrid}>
+              <GrowingHStack direction="row" alignItems="center" spacing={2}>
+                <FormControlLabel
+                  label="Repeat survey"
+                  control={<Checkbox
+                    color="primary"
+                    onChange={onChangeIntervalEnabled}
+                    checked={surveyData.intervalEnabled}
+                  />}
+                  style={{ marginRight: 0 }}
+                />
+
+                {surveyData.intervalEnabled &&
                   <span>every</span>
-              }
-              {surveyData.intervalEnabled &&
-                  <TextField 
-                    style={{width: 50}} 
-                    onChange={onChangeIntervalValue} 
-                    value={surveyData.intervalValue} 
-                    error={errors.intervalValue}/>
-              }
-              {surveyData.intervalEnabled &&
+                }
+                {surveyData.intervalEnabled &&
+                  <TextField
+                    style={{ width: 50 }}
+                    onChange={onChangeIntervalValue}
+                    value={surveyData.intervalValue}
+                    error={errors.intervalValue} />
+                }
+                {surveyData.intervalEnabled &&
                   <Select value={0} >
                     <MenuItem value={0}>week(s)</MenuItem>
                   </Select>
-              }
-              {surveyData.intervalEnabled &&
+                }
+                {surveyData.intervalEnabled &&
                   <span>starting at</span>
-              }
-              {surveyData.intervalEnabled &&   
+                }
+                {surveyData.intervalEnabled &&
                   <DateTimePicker
                     label="From"
                     inputFormat="ccc, LLL dd, yyyy HH:mm a ZZZZ"
@@ -381,62 +381,62 @@ export default function SurveyCreate({survey, callbackHandleClose}) {
                     error={errors.intervalStart}
                     disabled={survey != null}
                     renderInput={(params) => <GrowingTextField {...params} />}
-                    style={{width:'100%'}}
+                    style={{ width: '100%' }}
                   />
-              }
-            </GrowingHStack>
+                }
+              </GrowingHStack>
+            </Grid>
+            <Grid item xs={12} className={classes.inputGrid}>
+              <GrowingHStack direction="row" alignItems="center" spacing={2}>
+                <FormControlLabel
+                  label="Send reminder"
+                  control={<Checkbox
+                    color="primary"
+                    disabled={!surveyData.intervalEnabled}
+                    onChange={onChangeReminderEnabled}
+                    checked={surveyData.reminderEnabled}
+                  />}
+                  style={{ marginRight: 0 }}
+                />
+
+                {surveyData.reminderEnabled &&
+                  <span>after</span>
+                }
+                {surveyData.reminderEnabled &&
+                  <TextField
+                    style={{ width: 50 }}
+                    onChange={onChangeReminderValue}
+                    value={surveyData.reminderValue}
+                    error={errors.reminderValue} />
+                }
+                {surveyData.reminderEnabled &&
+                  <Select value={0}>
+                    <MenuItem value={0}>day(s)</MenuItem>
+                  </Select>
+                }
+              </GrowingHStack>
+            </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.inputGrid}>
-            <GrowingHStack direction="row" alignItems="center" spacing={2}>
-              <FormControlLabel
-                label="Send reminder"
-                control={<Checkbox 
-                  color="primary" 
-                  disabled={!surveyData.intervalEnabled} 
-                  onChange={onChangeReminderEnabled} 
-                  checked={surveyData.reminderEnabled}
-                />}
-                style={{marginRight:0}}
-              />
-              
-              {surveyData.reminderEnabled &&
-                <span>after</span>
-              }
-              {surveyData.reminderEnabled &&
-                <TextField 
-                  style={{width: 50}} 
-                  onChange={onChangeReminderValue}
-                  value={surveyData.reminderValue}
-                  error={errors.reminderValue}/>
-              }
-              {surveyData.reminderEnabled && 
-                <Select value={0}>
-                  <MenuItem value={0}>day(s)</MenuItem>
-                </Select>
-              }
-            </GrowingHStack>
-          </Grid>
-        </Grid>
-      </div>
-    </DialogContent>
-    <DialogActions>
-      <Button
-        variant="contained"
-        color="secondary"
-        disabled={false}
-        startIcon={<CancelIcon />}
-        onClick={() => callbackHandleClose()}>
-        Cancel
-      </Button>
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={false}
-        startIcon={<SaveIcon />}
-        onClick={validateAndSave}>
-        Save
-      </Button>
-    </DialogActions>
+        </div>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          variant="contained"
+          color="secondary"
+          disabled={false}
+          startIcon={<CancelIcon />}
+          onClick={() => callbackHandleClose()}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={false}
+          startIcon={<SaveIcon />}
+          onClick={validateAndSave}>
+          Save
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }

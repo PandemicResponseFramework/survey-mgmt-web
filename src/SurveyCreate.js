@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
-import {isPositiveInteger, useInterval} from './Utils';
+import { isPositiveInteger, useInterval } from './Utils';
 import Axios from 'axios';
 
 const useStyles = makeStyles()((theme) => ({
@@ -39,7 +39,7 @@ const useStyles = makeStyles()((theme) => ({
   },
 }));
 
-export default function SurveyCreate({callback}) {
+export default function SurveyCreate({ callback }) {
 
   const { classes } = useStyles();
 
@@ -72,7 +72,7 @@ export default function SurveyCreate({callback}) {
     dependsOn: -1,
   });
 
-  const [errors, setErrors] = React.useState({...ERRORS_INIT});
+  const [errors, setErrors] = React.useState({ ...ERRORS_INIT });
 
   const [loadingState, setLoadingState] = React.useState({
     data: [],
@@ -186,7 +186,7 @@ export default function SurveyCreate({callback}) {
   const validateAndSave = (event) => {
 
     // validate
-    const result = {...ERRORS_INIT};
+    const result = { ...ERRORS_INIT };
     let validationFailed = false;
 
     if (!surveyData.nameId) {
@@ -239,7 +239,7 @@ export default function SurveyCreate({callback}) {
       reminderType: 'AFTER_DAYS',
       reminderValue: parseInt(surveyData.reminderValue),
     }).then(function (response) {
-      callback({viewId: 'SURVEY_OVERVIEW'});
+      callback({ viewId: 'SURVEY_OVERVIEW' });
     }).catch(function (error) {
       // do nothing
     });
@@ -256,32 +256,32 @@ export default function SurveyCreate({callback}) {
           <h2>Create New Survey</h2>
         </Grid>
         <Grid item xs={12}>
-          <TextField 
-            label="NameID" 
-            variant="outlined" 
-            className={classes.textField} 
-            onChange={onChangeNameId} 
+          <TextField
+            label="NameID"
+            variant="outlined"
+            className={classes.textField}
+            onChange={onChangeNameId}
             value={surveyData.nameId}
-            error={errors.nameId}/>
+            error={errors.nameId} />
         </Grid>
         <Grid item xs={12}>
-          <TextField 
-            label="Title" 
-            variant="outlined" 
-            className={classes.textField} 
-            onChange={onChangeTitle} 
+          <TextField
+            label="Title"
+            variant="outlined"
+            className={classes.textField}
+            onChange={onChangeTitle}
             value={surveyData.title}
-            error={errors.title}/>
+            error={errors.title} />
         </Grid>
         <Grid item xs={12}>
-          <TextField 
-            label="Description" 
-            variant="outlined" 
-            className={classes.textField} 
-            multiline={true} 
-            rows={5} 
-            onChange={onChangeDescription} 
-            value={surveyData.description}/>
+          <TextField
+            label="Description"
+            variant="outlined"
+            className={classes.textField}
+            multiline={true}
+            rows={5}
+            onChange={onChangeDescription}
+            value={surveyData.description} />
         </Grid>
         <Grid item xs={12}>
           <FormControl variant="outlined" className={classes.formControl}>
@@ -291,7 +291,7 @@ export default function SurveyCreate({callback}) {
               id="depends-on-select"
               value={surveyData.dependsOn}
               onChange={onChangeDependsOn}
-              disabled={nameIds==null}
+              disabled={nameIds == null}
               label="Depends on Survey">
               <MenuItem value="-1" key="-1">
                 <em>None</em>
@@ -303,27 +303,27 @@ export default function SurveyCreate({callback}) {
           </FormControl>
         </Grid>
         <Grid item xs={12} className={classes.inputGrid}>
-          <Checkbox 
-            color="primary" 
-            onChange={onChangeIntervalEnabled} 
-            checked={surveyData.intervalEnabled}/>
-          
+          <Checkbox
+            color="primary"
+            onChange={onChangeIntervalEnabled}
+            checked={surveyData.intervalEnabled} />
+
           <span>Repeat survey</span>
-          
+
           {surveyData.intervalEnabled &&
             <div className={classes.inputGrid}>
               <span>every</span>
-              
-              <TextField 
-                style={{width: 50}} 
-                onChange={onChangeIntervalValue} 
-                value={surveyData.intervalValue} 
-                error={errors.intervalValue}/>
-              
+
+              <TextField
+                style={{ width: 50 }}
+                onChange={onChangeIntervalValue}
+                value={surveyData.intervalValue}
+                error={errors.intervalValue} />
+
               <Select value={0} >
                 <MenuItem value={0}>week(s)</MenuItem>
               </Select>
-              
+
               <span>starting at</span>
 
               <DateTimePicker
@@ -338,24 +338,24 @@ export default function SurveyCreate({callback}) {
           }
         </Grid>
         <Grid item xs={12} className={classes.inputGrid}>
-          <Checkbox 
-            color="primary" 
-            disabled={!surveyData.intervalEnabled} 
-            onChange={onChangeReminderEnabled} 
-            checked={surveyData.reminderEnabled}/>
-          
+          <Checkbox
+            color="primary"
+            disabled={!surveyData.intervalEnabled}
+            onChange={onChangeReminderEnabled}
+            checked={surveyData.reminderEnabled} />
+
           <span>Send reminder</span>
-          
+
           {surveyData.reminderEnabled &&
             <div className={classes.inputGrid}>
               <span>after</span>
 
-              <TextField 
-                style={{width: 50}} 
+              <TextField
+                style={{ width: 50 }}
                 onChange={onChangeReminderValue}
                 value={surveyData.reminderValue}
-                error={errors.reminderValue}/>
-              
+                error={errors.reminderValue} />
+
               <Select value={0}>
                 <MenuItem value={0}>day(s)</MenuItem>
               </Select>
@@ -368,7 +368,7 @@ export default function SurveyCreate({callback}) {
             color="secondary"
             disabled={false}
             startIcon={<CancelIcon />}
-            onClick={(event) => callback({viewId: 'SURVEY_OVERVIEW'})}>
+            onClick={(event) => callback({ viewId: 'SURVEY_OVERVIEW' })}>
             Cancel
           </Button>
           <Button

@@ -142,13 +142,13 @@ export default function Main() {
     Axios.defaults.baseURL = appConfig.appServerUrl;
     Axios.defaults.withCredentials = true;
     Axios.defaults.maxRedirects = 0;
-    
+
     Axios.interceptors.response.use((response) => {
       return response;
     }, (error) => {
 
       if (error.response) {
-        
+
         if (error.response.status === 401 || error.response.status === 403) {
           setAppConfig({
             ...appConfig,
@@ -156,7 +156,7 @@ export default function Main() {
             initialized: true,
           });
         } else if ((typeof error.response.data === 'string' || error.response.data instanceof String) && error.response.data.length > 0) {
-            enqueueSnackbar(error.response.data, { variant: 'error' });
+          enqueueSnackbar(error.response.data, { variant: 'error' });
         } else {
           enqueueSnackbar(error.message, { variant: 'error' });
         }

@@ -34,7 +34,7 @@ const useStyles = makeStyles()((theme) => ({
 export default function ExcelFileDropZone(props) {
 
     const { classes } = useStyles();
-    const {callback} = props;
+    const { callback } = props;
 
     const onDrop = useCallback(acceptedFiles => {
 
