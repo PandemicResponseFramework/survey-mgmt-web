@@ -359,17 +359,14 @@ export default function SurveyCreate({survey, callbackHandleClose}) {
                 <span>starting at</span>
                 
                 <DateTimePicker
-                  id="interval-start-dialog"
+                  label="From"
                   format="dd-MM-yyyy HH:mm O"
                   onChange={onChangeIntervalStart}
                   value={surveyData.intervalStart}
                   error={errors.intervalStart}
-                  style={{minWidth: 250}}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }} 
                   disabled={survey != null}
-                  />
+                  renderInput={(params) => <TextField {...params} />}
+                />
               </div>
             }
           </Grid>
