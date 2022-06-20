@@ -319,7 +319,9 @@ export default function SurveyEdit({callback, surveyId}) {
           </IconButton>
         </Tooltip>
         {survey.releaseStatus === ReleaseStatusTypes.EDIT &&
-          <NewReleasesIcon style={{color: 'yellowgreen'}} className={classes.nodeTitleItem}/>
+          <Tooltip title="Changed Item">
+            <NewReleasesIcon style={{color: 'yellowgreen'}} className={classes.nodeTitleItem}/>
+          </Tooltip>
         }
         <span>{survey.nameId + ': ' + survey.title}</span>
       </div>
@@ -341,7 +343,7 @@ export default function SurveyEdit({callback, surveyId}) {
         </Tooltip>
         {(question.container.subQuestions == null || question.container.subQuestions.length === 0) &&
           <Tooltip title="Delete condition">
-            <IconButton size="small" color="secondary" aria-label="delete" className={classes.nodeTitleItem} onClick={() => onDeleteCondition(question.container.id)}>
+            <IconButton size="small" color="error" aria-label="delete" className={classes.nodeTitleItem} onClick={() => onDeleteCondition(question.container.id)}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -369,27 +371,27 @@ export default function SurveyEdit({callback, surveyId}) {
     switch (question.type) {
       case QuestionTypes.CHOICE: 
         icon = question.multiple 
-          ? <CheckBoxIcon color="disabled" className={classes.nodeTitleItem}/> 
-          : <RadioButtonIcon color="disabled" className={classes.nodeTitleItem}/>;
+          ? <Tooltip title="Multiple Choice question"><CheckBoxIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>
+          : <Tooltip title="Single Choice question"><RadioButtonIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
         canHaveChildren = true;
         hasCondition = question.container != null;
         break;
       case QuestionTypes.TEXT: 
-        icon = <TextIcon color="disabled" className={classes.nodeTitleItem}/>;
+        icon = <Tooltip title="Text question"><TextIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
         break;
       case QuestionTypes.BOOL: 
-        icon = <ToggleIcon color="disabled" className={classes.nodeTitleItem}/>;
+        icon = <Tooltip title="Yes/No question"><ToggleIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
         canHaveChildren = true;
         hasCondition = question.container != null;
         break;
       case QuestionTypes.NUMBER: 
-        icon = <NumberIcon color="disabled" className={classes.nodeTitleItem}/>;
+        icon = <Tooltip title="Numeric question"><NumberIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
         break;
       case QuestionTypes.RANGE: 
-        icon = <SliderIcon color="disabled" className={classes.nodeTitleItem}/>;
+        icon = <Tooltip title="Slider question"><SliderIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
         break;
       case QuestionTypes.CHECKLIST:
-        icon = <ListIcon color="disabled" className={classes.nodeTitleItem}/>;
+        icon = <Tooltip title="DEPRECATED Checklist question"><ListIcon color="disabled" className={classes.nodeTitleItem}/></Tooltip>;
         break;
       default:
     }
@@ -414,13 +416,15 @@ export default function SurveyEdit({callback, surveyId}) {
           }
           {question.nameId == null && question.container == null &&
             <Tooltip title="Delete question">
-              <IconButton size="small" color="secondary" aria-label="delete" className={classes.nodeTitleItem} onClick={() => onDeleteQuestion(question.id)}>
+              <IconButton size="small" color="error" aria-label="delete" className={classes.nodeTitleItem} onClick={() => onDeleteQuestion(question.id)}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
           }
           {question.releaseStatus === ReleaseStatusTypes.EDIT &&
-            <NewReleasesIcon style={{color: 'yellowgreen'}} className={classes.nodeTitleItem}/>
+            <Tooltip title="Changed Item">
+              <NewReleasesIcon style={{color: 'yellowgreen'}} className={classes.nodeTitleItem}/>
+            </Tooltip>
           }
           {icon}
           <span>{text}</span>
