@@ -1,12 +1,12 @@
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Grid, TextField, Select, MenuItem, Checkbox, Fade, LinearProgress, FormControl, InputLabel } from '@mui/material';
+import { Dialog, FormControlLabel, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Grid, TextField, Select, MenuItem, Checkbox, Fade, LinearProgress, FormControl, InputLabel, withStyles, Stack } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import React, { useEffect } from 'react';
 import { DateTimePicker } from '@mui/x-date-pickers';
-import DateFnsUtils from '@date-io/date-fns';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
 import {isPositiveInteger, useInterval} from './Utils';
 import Axios from 'axios';
+import { styled } from '@mui/material/styles';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -39,6 +39,14 @@ const useStyles = makeStyles()((theme) => ({
     marginTop: theme.spacing(2),
   },
 }));
+
+const GrowingTextField = styled(TextField)`
+  width: 100%;
+  flex-grow: 1;
+`;
+const GrowingHStack = styled(Stack)`
+  width: 100%;
+`;
 
 export default function SurveyCreate({survey, callbackHandleClose}) {
 
@@ -335,65 +343,78 @@ export default function SurveyCreate({survey, callbackHandleClose}) {
             </FormControl>
           </Grid>
           <Grid item xs={12} className={classes.inputGrid}>
-            <Checkbox 
-              color="primary" 
-              onChange={onChangeIntervalEnabled} 
-              checked={surveyData.intervalEnabled}/>
+            <GrowingHStack direction="row" alignItems="center" spacing={2}>
+              <FormControlLabel
+                label="Repeat survey"
+                  control={<Checkbox 
+                  color="primary" 
+                  onChange={onChangeIntervalEnabled} 
+                  checked={surveyData.intervalEnabled}
+                />}
+                style={{marginRight:0}}
+              />
             
-            <span>Repeat survey</span>
-            
-            {surveyData.intervalEnabled &&
-              <div className={classes.inputGrid}>
-                <span>every</span>
-                
-                <TextField 
-                  style={{width: 50}} 
-                  onChange={onChangeIntervalValue} 
-                  value={surveyData.intervalValue} 
-                  error={errors.intervalValue}/>
-                
-                <Select value={0} >
-                  <MenuItem value={0}>week(s)</MenuItem>
-                </Select>
-                
-                <span>starting at</span>
-                
-                <DateTimePicker
-                  label="From"
-                  format="dd-MM-yyyy HH:mm O"
-                  onChange={onChangeIntervalStart}
-                  value={surveyData.intervalStart}
-                  error={errors.intervalStart}
-                  disabled={survey != null}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </div>
-            }
+              {surveyData.intervalEnabled &&
+                  <span>every</span>
+              }
+              {surveyData.intervalEnabled &&
+                  <TextField 
+                    style={{width: 50}} 
+                    onChange={onChangeIntervalValue} 
+                    value={surveyData.intervalValue} 
+                    error={errors.intervalValue}/>
+              }
+              {surveyData.intervalEnabled &&
+                  <Select value={0} >
+                    <MenuItem value={0}>week(s)</MenuItem>
+                  </Select>
+              }
+              {surveyData.intervalEnabled &&
+                  <span>starting at</span>
+              }
+              {surveyData.intervalEnabled &&   
+                  <DateTimePicker
+                    label="From"
+                    inputFormat="ccc, LLL dd, yyyy HH:mm a ZZZZ"
+                    onChange={onChangeIntervalStart}
+                    value={surveyData.intervalStart}
+                    error={errors.intervalStart}
+                    disabled={survey != null}
+                    renderInput={(params) => <GrowingTextField {...params} />}
+                    style={{width:'100%'}}
+                  />
+              }
+            </GrowingHStack>
           </Grid>
           <Grid item xs={12} className={classes.inputGrid}>
-            <Checkbox 
-              color="primary" 
-              disabled={!surveyData.intervalEnabled} 
-              onChange={onChangeReminderEnabled} 
-              checked={surveyData.reminderEnabled}/>
-            
-            <span>Send reminder</span>
-            
-            {surveyData.reminderEnabled &&
-              <div className={classes.inputGrid}>
+            <GrowingHStack direction="row" alignItems="center" spacing={2}>
+              <FormControlLabel
+                label="Send reminder"
+                control={<Checkbox 
+                  color="primary" 
+                  disabled={!surveyData.intervalEnabled} 
+                  onChange={onChangeReminderEnabled} 
+                  checked={surveyData.reminderEnabled}
+                />}
+                style={{marginRight:0}}
+              />
+              
+              {surveyData.reminderEnabled &&
                 <span>after</span>
-
+              }
+              {surveyData.reminderEnabled &&
                 <TextField 
                   style={{width: 50}} 
                   onChange={onChangeReminderValue}
                   value={surveyData.reminderValue}
                   error={errors.reminderValue}/>
-                
+              }
+              {surveyData.reminderEnabled && 
                 <Select value={0}>
                   <MenuItem value={0}>day(s)</MenuItem>
                 </Select>
-              </div>
-            }
+              }
+            </GrowingHStack>
           </Grid>
         </Grid>
       </div>

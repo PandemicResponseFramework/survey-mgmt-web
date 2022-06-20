@@ -9,8 +9,8 @@ import React, { useEffect } from 'react';
 import { useInterval } from './Utils';
 import {ReleaseStatusTypes, ManagementViewTypes} from './Constants';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
-import { format } from 'date-fns';
 import { styled } from '@mui/material/styles';
+import { DateTime } from "luxon";
 
 const Root = styled("div")`
   display: flex;
@@ -184,7 +184,7 @@ export default function SurveyOverview({callback}) {
                       : <Box color="warning.light" style={{ fontWeight: 'bold' }}>NO</Box>
                     }
                   </TableCell>
-                  <TableCell>{data.intervalStart ? format(new Date(data.intervalStart), 'dd-MM-yyyy HH:mm O') : 'NONE'}</TableCell>
+                  <TableCell>{data.intervalStart ? DateTime.fromJSDate(new Date(data.intervalStart)).toFormat('dd-MM-yyyy HH:mm') : 'NONE'}</TableCell>
                   <TableCell>
                     <TableGrid container spacing={1}>
                       <Grid item xs={4}>

@@ -7,7 +7,7 @@ import React, { useCallback } from 'react';
 import ExcelFileDropZone from './ExcelFileDropZone';
 import ImportFeedback from './ImportFeedback';
 import { useInterval } from './Utils';
-import { useSnackbar } from 'react-notistack';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles()((theme) => ({
 

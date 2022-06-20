@@ -11,7 +11,7 @@ import ParticipantsImport from './ParticipantsImport';
 import ParticipantsInvite from './ParticipantsInvite';
 import SurveyComponent from './SurveyComponent';
 import Axios from 'axios';
-import { useSnackbar } from 'react-notistack';
+import { useSnackbar } from 'notistack';
 import '@nosferatu500/react-sortable-tree/style.css'; // This only needs to be imported once in your app
 
 const drawerWidth = 240;

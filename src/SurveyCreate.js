@@ -328,7 +328,7 @@ export default function SurveyCreate({callback}) {
 
               <DateTimePicker
                 label="From"
-                format="dd-MM-yyyy HH:mm"
+                inputFormat="ccc, LLL dd, yyyy HH:mm a ZZZZ"
                 onChange={onChangeIntervalStart}
                 value={surveyData.intervalStart}
                 error={errors.intervalStart}

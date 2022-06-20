@@ -1,20 +1,21 @@
 import React from 'react';
-import ReactDOM from "react-dom";
+import { createRoot } from 'react-dom/client';
 import Main from './Main';
-import { SnackbarProvider } from 'react-notistack';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { SnackbarProvider } from 'notistack';
+import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import createCache from '@emotion/cache';
 import { CacheProvider } from "@emotion/react";
 import { ThemeProvider } from '@mui/material/styles';
 import { customTheme } from './Setup';
+import ErrorBoundary from './ErrorBoundary';
 
 export const muiCache = createCache({
     'key': 'mui',
     'prepend': true,
 });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root'));
 
 /**
  * 1. SnackBar setup provider
@@ -23,13 +24,15 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
  * 4. MUI date/time picker localization provider
  */
 root.render(
-    <SnackbarProvider maxSnack={5}>
-        <CacheProvider value={muiCache}>
-            <ThemeProvider theme={customTheme}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <Main />
-                </LocalizationProvider>
-            </ThemeProvider>
-        </CacheProvider>
-    </SnackbarProvider>
+    <ErrorBoundary>
+        <SnackbarProvider maxSnack={5} preventDuplicate>
+            <CacheProvider value={muiCache}>
+                <ThemeProvider theme={customTheme}>
+                    <LocalizationProvider dateAdapter={AdapterLuxon}>
+                        <Main />
+                    </LocalizationProvider>
+                </ThemeProvider>
+            </CacheProvider>
+        </SnackbarProvider>
+    </ErrorBoundary>
 );
