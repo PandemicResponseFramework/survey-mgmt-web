@@ -184,7 +184,7 @@ export default function SurveyOverview({callback}) {
                       : <Box color="warning.light" style={{ fontWeight: 'bold' }}>NO</Box>
                     }
                   </TableCell>
-                  <TableCell>{data.intervalStart ? DateTime.fromJSDate(new Date(data.intervalStart)).toFormat('dd-MM-yyyy HH:mm') : 'NONE'}</TableCell>
+                  <TableCell>{data.intervalStart ? DateTime.fromJSDate(new Date(data.intervalStart)).toFormat("ccc, LLL dd, yyyy HH:mm a ZZZZ") : 'NONE'}</TableCell>
                   <TableCell>
                     <TableGrid container spacing={1}>
                       <Grid item xs={4}>
