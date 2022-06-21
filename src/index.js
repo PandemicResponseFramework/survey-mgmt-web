@@ -9,6 +9,7 @@ import { CacheProvider } from "@emotion/react";
 import { ThemeProvider } from '@mui/material/styles';
 import { customTheme } from './Setup';
 import ErrorBoundary from './ErrorBoundary';
+import '@nosferatu500/react-sortable-tree/style.css'; // This only needs to be imported once in your app
 
 export const muiCache = createCache({
     'key': 'mui',

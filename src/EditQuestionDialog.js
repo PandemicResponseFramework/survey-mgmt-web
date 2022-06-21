@@ -1,6 +1,5 @@
-import React from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton, FormGroup, FormControl, FormControlLabel, InputLabel, Select, MenuItem, TextField, Switch } from '@mui/material';
-import { makeStyles } from 'tss-react/mui';
+import React, { Fragment } from 'react';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button, IconButton, FormControl, FormControlLabel, InputLabel, Select, MenuItem, TextField, Switch, Grid } from '@mui/material';
 import { QuestionTypes } from './Constants';
 import { isInteger, isPositiveInteger } from './Utils';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -9,27 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Axios from 'axios';
 
-const useStyles = makeStyles()((theme) => ({
-  form2: {
-    margin: theme.spacing(1),
-    minWidth: 440,
-  },
-  form4: {
-    margin: theme.spacing(1),
-    minWidth: 212,
-  },
-  flexRow: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  actionButton: {
-    margin: theme.spacing(1),
-  },
-}));
-
 export default function EditQuestionDialog({ parentId, surveyElement, callbackHandleClose }) {
-
-  const { classes } = useStyles();
 
   const title = surveyElement == null ? 'Add Question' : 'Edit Question';
 
@@ -281,29 +260,29 @@ export default function EditQuestionDialog({ parentId, surveyElement, callbackHa
     <Dialog open={true} maxWidth="md" fullWidth={true} onClose={() => callbackHandleClose()} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText></DialogContentText>
+        <Grid container spacing={2} style={{ paddingTop: 10 }}>
+          <Grid item xs={6}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel id="question-type-label">Question Type</InputLabel>
+              <Select
+                labelId="question-type-label"
+                id="question-type"
+                value={questionData.type}
+                onChange={onChangeType}
+                label="Question Type"
+                fullWidth={true}
+                disabled={surveyElement != null}
+              >
+                <MenuItem value={QuestionTypes.BOOL}>Yes/No Question</MenuItem>
+                <MenuItem value={QuestionTypes.CHOICE}>Choice Question</MenuItem>
+                <MenuItem value={QuestionTypes.NUMBER}>Number Question</MenuItem>
+                <MenuItem value={QuestionTypes.RANGE}>Range Question</MenuItem>
+                <MenuItem value={QuestionTypes.TEXT}>Text Question</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
-        <FormGroup row>
-          <FormControl variant="outlined" className={classes.form2}>
-            <InputLabel id="question-type-label">Question Type</InputLabel>
-            <Select
-              labelId="question-type-label"
-              id="question-type"
-              value={questionData.type}
-              onChange={onChangeType}
-              label="Question Type"
-              fullWidth={true}
-              disabled={surveyElement != null}
-            >
-              <MenuItem value={QuestionTypes.BOOL}>Yes/No Question</MenuItem>
-              <MenuItem value={QuestionTypes.CHOICE}>Choice Question</MenuItem>
-              <MenuItem value={QuestionTypes.NUMBER}>Number Question</MenuItem>
-              <MenuItem value={QuestionTypes.RANGE}>Range Question</MenuItem>
-              <MenuItem value={QuestionTypes.TEXT}>Text Question</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormGroup row>
+          <Grid item xs={3}>
             <FormControlLabel
               control={
                 <Switch
@@ -314,9 +293,10 @@ export default function EditQuestionDialog({ parentId, surveyElement, callbackHa
                 />
               }
               label="Optional"
-              className={classes.form4}
             />
-            {questionData.type === QuestionTypes.TEXT &&
+          </Grid>
+          {questionData.type === QuestionTypes.TEXT &&
+            <Grid item xs={3}>
               <FormControlLabel
                 control={
                   <Switch
@@ -327,10 +307,11 @@ export default function EditQuestionDialog({ parentId, surveyElement, callbackHa
                   />
                 }
                 label="Multiline"
-                className={classes.form4}
               />
-            }
-            {questionData.type === QuestionTypes.CHOICE &&
+            </Grid>
+          }
+          {questionData.type === QuestionTypes.CHOICE &&
+            <Grid item xs={3}>
               <FormControlLabel
                 control={
                   <Switch
@@ -341,99 +322,118 @@ export default function EditQuestionDialog({ parentId, surveyElement, callbackHa
                   />
                 }
                 label="Multiple Choice"
-                className={classes.actionButton}
               />
-            }
-          </FormGroup>
-        </FormGroup>
+            </Grid>
+          }
+          {questionData.type !== QuestionTypes.TEXT && questionData.type !== QuestionTypes.CHOICE &&
+            <Grid item xs={3} />
+          }
 
-        <FormGroup>
-          <FormControl className={classes.form2}>
-            <TextField
-              label="Question Text"
-              variant="outlined"
-              onChange={onChangeQuestionText}
-              value={questionData.question}
-              error={errors.question} />
-          </FormControl>
-        </FormGroup>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <TextField
+                label="Question Text"
+                variant="outlined"
+                onChange={onChangeQuestionText}
+                value={questionData.question}
+                error={errors.question} />
+            </FormControl>
+          </Grid>
 
-        {(questionData.type === QuestionTypes.NUMBER || questionData.type === QuestionTypes.RANGE) &&
-          <FormGroup row>
-            <FormControl className={classes.form2}>
-              <TextField
-                label="Minimum Value"
-                variant="outlined"
-                onChange={onChangeMinValue}
-                value={questionData.minValue}
-                error={errors.minValue} />
-            </FormControl>
-            <FormControl className={classes.form2}>
-              <TextField
-                label="Maximum Value"
-                variant="outlined"
-                onChange={onChangeMaxValue}
-                value={questionData.maxValue}
-                error={errors.maxValue} />
-            </FormControl>
-          </FormGroup>
-        }
-        {questionData.type === QuestionTypes.RANGE &&
-          <FormGroup row>
-            <FormControl className={classes.form2}>
-              <TextField
-                label="Minimum Value Text"
-                variant="outlined"
-                onChange={onChangeMinValueText}
-                value={questionData.minText} />
-            </FormControl>
-            <FormControl className={classes.form2}>
-              <TextField
-                label="Maximum Value Text"
-                variant="outlined"
-                onChange={onChangeMaxValueText}
-                value={questionData.maxText} />
-            </FormControl>
-          </FormGroup>
-        }
-        {questionData.type === QuestionTypes.TEXT &&
-          <FormGroup row>
-            <FormControl className={classes.form2}>
-              <TextField
-                label="Maximum Text Length"
-                variant="outlined"
-                onChange={onChangeMaxTextLength}
-                value={questionData.length}
-                error={errors.length} />
-            </FormControl>
-          </FormGroup>
-        }
-        {questionData.type === QuestionTypes.CHOICE &&
-          <FormGroup>
-            {questionData.answers.map((row, index) => (
-              <FormGroup row key={index}>
-                <FormControl className={classes.form2}>
+          {(questionData.type === QuestionTypes.NUMBER || questionData.type === QuestionTypes.RANGE) &&
+            <Grid item container xs={12} spacing={2}>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
                   <TextField
-                    label={"Answer " + (index + 1)}
+                    label="Minimum Value"
                     variant="outlined"
-                    onChange={(event) => onChangeAnswer(event, index)}
-                    value={questionData.answers[index]}
-                    error={errors.answers.length > index && errors.answers[index]} />
+                    onChange={onChangeMinValue}
+                    value={questionData.minValue}
+                    error={errors.minValue} />
                 </FormControl>
-                {index === questionData.answers.length - 1 &&
-                  <IconButton size="medium" color="primary" aria-label="add" className={classes.actionButton} onClick={onAddAnswer}>
-                    <AddIcon />
-                  </IconButton>
-                }
-                {questionData.answers.length > 1 &&
-                  <IconButton size="medium" color="secondary" aria-label="delete" className={classes.actionButton} onClick={() => onDeleteAnswer(index)}>
-                    <DeleteIcon />
-                  </IconButton>
-                }
-              </FormGroup>
-            ))}
-          </FormGroup>
-        }
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <TextField
+                    label="Maximum Value"
+                    variant="outlined"
+                    onChange={onChangeMaxValue}
+                    value={questionData.maxValue}
+                    error={errors.maxValue} />
+                </FormControl>
+              </Grid>
+            </Grid>
+          }
+          {questionData.type === QuestionTypes.RANGE &&
+            <Grid item container xs={12} spacing={2}>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <TextField
+                    label="Minimum Value Text"
+                    variant="outlined"
+                    onChange={onChangeMinValueText}
+                    value={questionData.minText} />
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <TextField
+                    label="Maximum Value Text"
+                    variant="outlined"
+                    onChange={onChangeMaxValueText}
+                    value={questionData.maxText} />
+                </FormControl>
+              </Grid>
+            </Grid>
+          }
+          {questionData.type === QuestionTypes.TEXT &&
+            <Grid item container xs={12}>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <TextField
+                    label="Maximum Text Length"
+                    variant="outlined"
+                    onChange={onChangeMaxTextLength}
+                    value={questionData.length}
+                    error={errors.length} />
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} />
+            </Grid>
+          }
+          {questionData.type === QuestionTypes.CHOICE &&
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                {questionData.answers.map((row, index) => (
+                  <Fragment>
+                    <Grid item xs={6}>
+                      <FormControl fullWidth>
+                        <TextField
+                          label={"Answer " + (index + 1)}
+                          variant="outlined"
+                          onChange={(event) => onChangeAnswer(event, index)}
+                          value={questionData.answers[index]}
+                          error={errors.answers.length > index && errors.answers[index]} />
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={6}>
+                      {index === questionData.answers.length - 1 &&
+                        <IconButton size="medium" color="primary" aria-label="add" onClick={onAddAnswer}>
+                          <AddIcon />
+                        </IconButton>
+                      }
+                      {questionData.answers.length > 1 &&
+                        <IconButton size="medium" color="error" aria-label="delete" onClick={() => onDeleteAnswer(index)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      }
+                    </Grid>
+                  </Fragment>
+                ))}
+              </Grid>
+            </Grid>
+          }
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button
@@ -453,6 +453,6 @@ export default function EditQuestionDialog({ parentId, surveyElement, callbackHa
           Save
         </Button>
       </DialogActions>
-    </Dialog>
+    </Dialog >
   );
 }

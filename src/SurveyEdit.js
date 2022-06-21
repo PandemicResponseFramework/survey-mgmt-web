@@ -1,5 +1,4 @@
-import { Fade, LinearProgress, IconButton, Button, Tooltip } from '@mui/material';
-import { makeStyles } from 'tss-react/mui';
+import { LinearProgress, IconButton, Button, Tooltip, Stack } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useInterval } from './Utils';
 import Axios from 'axios';
@@ -22,46 +21,9 @@ import EditQuestionDialog from './EditQuestionDialog';
 import EditConditionDialog from './EditConditionDialog';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
 import { QuestionTypes, ReleaseStatusTypes, ManagementViewTypes } from './Constants';
-
-const useStyles = makeStyles()((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  margin: {
-    margin: theme.spacing(1),
-  },
-  buttons: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  action: {
-    marginRight: theme.spacing(1),
-  },
-  loading: {
-    marginTop: 10,
-  },
-  nodeTitle: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  nodeTitleItem: {
-    marginRight: 5,
-  },
-  treeView: {
-    height: 'calc(100vh - 170px)',
-  },
-  surveyTitle: {
-    fontWeight: 'normal',
-  },
-}));
+import { Fader, Root, TreeViewPort } from './Styles';
 
 export default function SurveyEdit({ callback, surveyId }) {
-
-  const { classes } = useStyles();
 
   const [loadingState, setLoadingState] = React.useState({
     data: [],
@@ -307,53 +269,53 @@ export default function SurveyEdit({ callback, surveyId }) {
 
   const createSurveyNodeTitle = (survey) => {
     return (
-      <div className={classes.nodeTitle}>
+      <Stack direction="row" alignItems="center" spacing={1}>
         <Tooltip title="Edit survey metadata">
-          <IconButton size="small" color="primary" aria-label="edit" className={classes.nodeTitleItem} onClick={() => onEditSurvey(survey)}>
+          <IconButton size="small" color="primary" aria-label="edit" onClick={() => onEditSurvey(survey)}>
             <EditIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Add question">
-          <IconButton size="small" color="primary" aria-label="add" className={classes.nodeTitleItem} onClick={() => onEditQuestion(survey.id)}>
+          <IconButton size="small" color="primary" aria-label="add" onClick={() => onEditQuestion(survey.id)}>
             <AddIcon />
           </IconButton>
         </Tooltip>
         {survey.releaseStatus === ReleaseStatusTypes.EDIT &&
           <Tooltip title="Changed Item">
-            <NewReleasesIcon style={{ color: 'yellowgreen' }} className={classes.nodeTitleItem} />
+            <NewReleasesIcon style={{ color: 'yellowgreen' }} />
           </Tooltip>
         }
         <span>{survey.nameId + ': ' + survey.title}</span>
-      </div>
+      </Stack>
     );
   };
 
   const createConditionNodeTitle = (question) => {
     return (
-      <div className={classes.nodeTitle}>
+      <Stack direction="row" alignItems="center" spacing={1}>
         <Tooltip title="Edit condition">
-          <IconButton size="small" color="primary" aria-label="edit" className={classes.nodeTitleItem} onClick={() => onEditCondition(question)}>
+          <IconButton size="small" color="primary" aria-label="edit" onClick={() => onEditCondition(question)}>
             <EditIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Add question">
-          <IconButton size="small" color="primary" aria-label="add" className={classes.nodeTitleItem} onClick={() => onEditQuestion(question.container.id)}>
+          <IconButton size="small" color="primary" aria-label="add" onClick={() => onEditQuestion(question.container.id)}>
             <AddIcon />
           </IconButton>
         </Tooltip>
         {(question.container.subQuestions == null || question.container.subQuestions.length === 0) &&
           <Tooltip title="Delete condition">
-            <IconButton size="small" color="error" aria-label="delete" className={classes.nodeTitleItem} onClick={() => onDeleteCondition(question.container.id)}>
+            <IconButton size="small" color="error" aria-label="delete" onClick={() => onDeleteCondition(question.container.id)}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
         }
         {question.releaseStatus === ReleaseStatusTypes.EDIT &&
-          <NewReleasesIcon style={{ color: 'yellowgreen' }} className={classes.nodeTitleItem} />
+          <NewReleasesIcon style={{ color: 'yellowgreen' }} />
         }
-        <CallSplitIcon color="disabled" style={{ transform: 'rotate(90deg)' }} className={classes.nodeTitleItem} />
+        <Tooltip title="Condition"><CallSplitIcon color="disabled" style={{ transform: 'rotate(90deg)' }} /></Tooltip>
         <span>Condition</span>
-      </div>
+      </Stack>
     );
   };
 
@@ -371,27 +333,27 @@ export default function SurveyEdit({ callback, surveyId }) {
     switch (question.type) {
       case QuestionTypes.CHOICE:
         icon = question.multiple
-          ? <Tooltip title="Multiple Choice question"><CheckBoxIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>
-          : <Tooltip title="Single Choice question"><RadioButtonIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
+          ? <Tooltip title="Multiple Choice question"><CheckBoxIcon color="disabled" /></Tooltip>
+          : <Tooltip title="Single Choice question"><RadioButtonIcon color="disabled" /></Tooltip>;
         canHaveChildren = true;
         hasCondition = question.container != null;
         break;
       case QuestionTypes.TEXT:
-        icon = <Tooltip title="Text question"><TextIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
+        icon = <Tooltip title="Text question"><TextIcon color="disabled" /></Tooltip>;
         break;
       case QuestionTypes.BOOL:
-        icon = <Tooltip title="Yes/No question"><ToggleIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
+        icon = <Tooltip title="Yes/No question"><ToggleIcon color="disabled" /></Tooltip>;
         canHaveChildren = true;
         hasCondition = question.container != null;
         break;
       case QuestionTypes.NUMBER:
-        icon = <Tooltip title="Numeric question"><NumberIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
+        icon = <Tooltip title="Numeric question"><NumberIcon color="disabled" /></Tooltip>;
         break;
       case QuestionTypes.RANGE:
-        icon = <Tooltip title="Slider question"><SliderIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
+        icon = <Tooltip title="Slider question"><SliderIcon color="disabled" /></Tooltip>;
         break;
       case QuestionTypes.CHECKLIST:
-        icon = <Tooltip title="DEPRECATED Checklist question"><ListIcon color="disabled" className={classes.nodeTitleItem} /></Tooltip>;
+        icon = <Tooltip title="DEPRECATED Checklist question"><ListIcon color="disabled" /></Tooltip>;
         break;
       default:
     }
@@ -399,52 +361,51 @@ export default function SurveyEdit({ callback, surveyId }) {
     const text = question.question;
 
     return (
-      <div className={classes.nodeTitle}>
+      <Stack direction="row" alignItems="center" spacing={1}>
         {question.type !== QuestionTypes.CHECKLIST &&
           <Tooltip title="Edit question">
-            <IconButton size="small" color="primary" aria-label="edit" className={classes.nodeTitleItem} onClick={() => onEditQuestion(parentId, question)}>
+            <IconButton size="small" color="primary" aria-label="edit" onClick={() => onEditQuestion(parentId, question)}>
               <EditIcon />
             </IconButton>
           </Tooltip>
         }
         {canHaveChildren === true && !hasCondition &&
           <Tooltip title="Add condition">
-            <IconButton size="small" color="primary" aria-label="add" className={classes.nodeTitleItem} onClick={() => onEditCondition(question)}>
+            <IconButton size="small" color="primary" aria-label="add" onClick={() => onEditCondition(question)}>
               <AddIcon />
             </IconButton>
           </Tooltip>
         }
         {question.nameId == null && question.container == null &&
           <Tooltip title="Delete question">
-            <IconButton size="small" color="error" aria-label="delete" className={classes.nodeTitleItem} onClick={() => onDeleteQuestion(question.id)}>
+            <IconButton size="small" color="error" aria-label="delete" onClick={() => onDeleteQuestion(question.id)}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
         }
         {question.releaseStatus === ReleaseStatusTypes.EDIT &&
           <Tooltip title="Changed Item">
-            <NewReleasesIcon style={{ color: 'yellowgreen' }} className={classes.nodeTitleItem} />
+            <NewReleasesIcon style={{ color: 'yellowgreen' }} />
           </Tooltip>
         }
         {icon}
         <span>{text}</span>
-      </div>
+      </Stack>
     );
   };
 
   return (
-    <div className={classes.root}>
+    <Root>
 
       {surveyDialogSetup.survey &&
         <EditSurveyMetaDataDialog survey={surveyDialogSetup.survey} callbackHandleClose={onCloseSurveyMetaDialog} />
       }
 
-      <div className={classes.buttons}>
+      <Stack direction="row" spacing={2}>
         <Button
           variant="contained"
           color="primary"
           startIcon={<ArrowBackIcon />}
-          className={classes.action}
           onClick={() => callback({ view: ManagementViewTypes.SURVEY_OVERVIEW })}
         >Back</Button>
 
@@ -452,22 +413,21 @@ export default function SurveyEdit({ callback, surveyId }) {
           variant="contained"
           color="secondary"
           startIcon={<CloudUploadIcon />}
-          className={classes.action}
           onClick={onReleaseSurvey}
         >Release Survey</Button>
-      </div>
+      </Stack>
 
-      <Fade in={loadingState.delay != null} className={classes.loading}>
+      <Fader in={loadingState.delay != null}>
         <LinearProgress />
-      </Fade>
+      </Fader>
 
-      <div className={classes.treeView}>
+      <TreeViewPort>
         <SortableTree
           treeData={treeData}
           onChange={newTreeData => setTreeData(newTreeData)}
           canDrag={false}
         />
-      </div>
+      </TreeViewPort>
 
       {questionDialogSetup && questionDialogSetup.parentId &&
         <EditQuestionDialog
@@ -481,6 +441,6 @@ export default function SurveyEdit({ callback, surveyId }) {
           question={conditionDialogSetup.question}
         />
       }
-    </div>
+    </Root>
   );
 }

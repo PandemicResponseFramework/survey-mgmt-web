@@ -7,51 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Axios from 'axios';
 import React, { useEffect } from 'react';
 import { binaryFind, insert, useInterval } from './Utils';
-import { styled } from '@mui/material/styles';
-
-const Root = styled("div")`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: space-between;
-`;
-const Fader = styled(Fade)`
-  margin-top: 10px;
-`;
-const TableButton = styled(Fab)`
-  margin: 0;
-  padding: 0;
-  box-shadow: none;
-`;
-const TableGrid = styled(Grid)`
-  & .MuiGrid-item {
-    padding-top: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-left: 2px;
-    padding-right: 10px;
-  };
-  margin: 0;
-`;
-const Overview = styled("div")`
-  display: flex;
-  flex-direction: column;
-  margin-top: 50px;
-`;
-const GrowingTextField = styled(TextField)`
-  flex-grow: 1;
-  width: 100%;
-`;
-const GrowingButton = styled(Button)`
-  flex-grow: 1;
-  width: 100%;
-`;
-const Pager = styled(Pagination)`
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
-`;
+import { Fader, Root, TableFab, TableGrid, Pager } from './Styles';
 
 export default function InviteParticipants() {
 
@@ -186,142 +142,143 @@ export default function InviteParticipants() {
 
   return (
     <Root>
-      <div>
-        <Grid container spacing={2}>
-          <Grid item xs={9}>
-            <GrowingTextField
-              label="Type the email address of the participant to invite"
-              value={email}
-              onChange={onChangeEmail}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <GrowingButton
-              variant="contained"
-              color="primary"
-              disabled={!(patternEmailSimple.test(email) && email.length <= 256)}
-              startIcon={<PersonAddIcon />}
-              onClick={() => onStartInvite(email)}>
-              Invite
-            </GrowingButton>
-          </Grid>
-          <Grid item xs={9}>
-            <GrowingTextField
-              label="Search for email address"
-              value={loadingState.searchFor}
-              onChange={onChangeSearchFor}
-              disabled={loadingState.delay != null}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <GrowingButton
-              variant="contained"
-              color="primary"
-              disabled={loadingState.delay != null}
-              startIcon={<RefreshIcon />}
-              onClick={onRefresh}>
-              Refresh
-            </GrowingButton>
-          </Grid>
+      <Grid container spacing={2}>
+        <Grid item xs={9}>
+          <TextField
+            label="Type the email address of the participant to invite"
+            value={email}
+            onChange={onChangeEmail}
+            fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
         </Grid>
-      </div>
+        <Grid item xs={3}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!(patternEmailSimple.test(email) && email.length <= 256)}
+            startIcon={<PersonAddIcon />}
+            onClick={() => onStartInvite(email)}
+            fullWidth>
+            Invite
+          </Button>
+        </Grid>
+        <Grid item xs={9}>
+          <TextField
+            label="Search for email address"
+            value={loadingState.searchFor}
+            onChange={onChangeSearchFor}
+            disabled={loadingState.delay != null}
+            fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={loadingState.delay != null}
+            startIcon={<RefreshIcon />}
+            onClick={onRefresh}
+            fullWidth>
+            Refresh
+          </Button>
+        </Grid>
+      </Grid>
 
-      <Overview>
+      <div style={{ marginTop: 50 }}>
 
         <Fader in={loadingState.delay != null}>
           <LinearProgress />
         </Fader>
 
-        <div>
-          <Pager
-            count={countPages}
-            page={page}
-            onChange={onPageChange}
-            color="primary"
-            showFirstButton showLastButton
-          />
+        <Pager
+          count={countPages}
+          page={page}
+          onChange={onPageChange}
+          color="primary"
+          showFirstButton showLastButton
+        />
 
-          <TableContainer component={Paper}>
-            <Table stickyHeader sx={{ minWidth: 650 }} size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>E-Mail</TableCell>
-                  <TableCell>State</TableCell>
-                  <TableCell>Confirmation Token</TableCell>
-                  <TableCell style={{ width: 120 }}>Actions</TableCell>
+        <TableContainer component={Paper}>
+          <Table stickyHeader sx={{ minWidth: 650 }} size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>E-Mail</TableCell>
+                <TableCell>State</TableCell>
+                <TableCell>Confirmation Token</TableCell>
+                <TableCell style={{ width: 120 }}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.slice((page - 1) * rowsPerPage, Math.min((page) * rowsPerPage, data.length)).map((data) => (
+                <TableRow
+                  key={data.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">{data.email}</TableCell>
+                  <TableCell>
+                    {data.state !== 'VERIFIED'
+                      ? <Box color="error.main" style={{ fontWeight: 'bold' }}>{data.state}</Box>
+                      : <Box color="success.main" style={{ fontWeight: 'bold' }}>{data.state}</Box>
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      variant="outlined"
+                      disabled={loadingState.delay != null}
+                      placeholder="Enter Token"
+                      onChange={(event) => onChangeConfirmationToken(event, data.email)}
+                      value={confirmationTokens[data.email]}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TableGrid container spacing={1}>
+                      <Grid item xs={6}>
+                        <Tooltip title="Re-Invite Participant">
+                          <TableFab
+                            size="small"
+                            color="primary"
+                            disabled={false}
+                            aria-label="new-release"
+                            onClick={() => onStartInvite(data.email, true)}>
+                            <PersonAddIcon />
+                          </TableFab>
+                        </Tooltip>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Tooltip title="Delete Participant">
+                          <TableFab
+                            size="small"
+                            color="error"
+                            disabled={false}
+                            aria-label="new-release"
+                            onClick={() => onDelete(data.email)}>
+                            <DeleteIcon />
+                          </TableFab>
+                        </Tooltip>
+                      </Grid>
+                    </TableGrid>
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.slice((page - 1) * rowsPerPage, Math.min((page) * rowsPerPage, data.length)).map((data) => (
-                  <TableRow
-                    key={data.id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">{data.email}</TableCell>
-                    <TableCell>
-                      {data.state !== 'VERIFIED'
-                        ? <Box color="error.main" style={{ fontWeight: 'bold' }}>{data.state}</Box>
-                        : <Box color="success.main" style={{ fontWeight: 'bold' }}>{data.state}</Box>
-                      }
-                    </TableCell>
-                    <TableCell>
-                      <GrowingTextField
-                        variant="outlined"
-                        disabled={loadingState.delay != null}
-                        placeholder="Enter Token"
-                        onChange={(event) => onChangeConfirmationToken(event, data.email)}
-                        value={confirmationTokens[data.email]}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <TableGrid container spacing={1}>
-                        <Grid item xs={6}>
-                          <Tooltip title="Re-Invite Participant">
-                            <TableButton
-                              size="small"
-                              color="primary"
-                              disabled={false}
-                              aria-label="new-release"
-                              onClick={() => onStartInvite(data.email, true)}>
-                              <PersonAddIcon />
-                            </TableButton>
-                          </Tooltip>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Tooltip title="Delete Participant">
-                            <TableButton
-                              size="small"
-                              color="error"
-                              disabled={false}
-                              aria-label="new-release"
-                              onClick={() => onDelete(data.email)}>
-                              <DeleteIcon />
-                            </TableButton>
-                          </Tooltip>
-                        </Grid>
-                      </TableGrid>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-      </Overview>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
     </Root>
   );
 }

@@ -1,5 +1,4 @@
-import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { makeStyles } from 'tss-react/mui';
+import { Button, FormControl, Grid, InputLabel, MenuItem, Select, Stack } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import Axios from 'axios';
@@ -8,35 +7,10 @@ import ExcelFileDropZone from './ExcelFileDropZone';
 import ImportFeedback from './ImportFeedback';
 import { useInterval } from './Utils';
 import { useSnackbar } from 'notistack';
-
-const useStyles = makeStyles()((theme) => ({
-
-    root: {
-        display: 'flex',
-        flexDirection: "column",
-        width: "100%",
-    },
-    actionContainer: {
-        display: 'flex',
-        marginTop: 10,
-        justifyContent: 'space-between',
-    },
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 250,
-    },
-    button: {
-        margin: theme.spacing(1),
-    },
-    feedbackContainer: {
-        width: '100%',
-        marginTop: 10,
-    },
-}));
+import { Root } from './Styles';
 
 export default function ParticipantsImport() {
 
-    const { classes } = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const [fileUploadState, setFileUploadState] = React.useState(null);
     const [importFeedback, setImportFeedback] = React.useState({
@@ -135,44 +109,47 @@ export default function ParticipantsImport() {
     }, importFeedback == null ? null : importFeedback.delay);
 
     return (
-        <div className={classes.root}>
-            <ExcelFileDropZone callback={onFileSelectionFeedback} />
+        <Root>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <ExcelFileDropZone callback={onFileSelectionFeedback} />
+                </Grid>
+                <Grid item xs={12}>
+                    <Stack direction="row" justifyContent="space-between">
+                        <FormControl>
+                            <InputLabel /* shrink */ id="select-column-label">Column</InputLabel>
+                            <Select
+                                labelId="select-column-label"
+                                label="Column"
+                                multiple={false}
+                                contentEditable={false}
+                                value={fileUploadState == null ? -1 : fileUploadState.selectedHeader}
+                                disabled={fileUploadState == null || fileUploadState.headers == null}
+                                onChange={onHeaderSelection}
+                                style={{ minWidth: 180 }}
+                            >
+                                <MenuItem key={-1} value={-1} disabled><em>Choose column</em></MenuItem>
+                                {fileUploadState != null && fileUploadState.headers != null && fileUploadState.headers.map((header, index) =>
+                                    <MenuItem key={index} value={index}>{header}</MenuItem>
+                                )}
+                            </Select>
+                        </FormControl>
 
-            <div className={classes.actionContainer}>
-                <FormControl className={classes.formControl}>
-                    <InputLabel /* shrink */ id="select-column-label">Column</InputLabel>
-                    <Select
-                        labelId="select-column-label"
-                        label="Column"
-                        multiple={false}
-                        contentEditable={false}
-                        value={fileUploadState == null ? -1 : fileUploadState.selectedHeader}
-                        disabled={fileUploadState == null || fileUploadState.headers == null}
-                        style={{ marginRight: 10 }}
-                        onChange={onHeaderSelection}
-                    >
-                        <MenuItem key={-1} value={-1} disabled><em>Choose column</em></MenuItem>
-                        {fileUploadState != null && fileUploadState.headers != null && fileUploadState.headers.map((header, index) =>
-                            <MenuItem key={index} value={index}>{header}</MenuItem>
-                        )}
-                    </Select>
-                </FormControl>
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={buttonDisabled}
-                    style={{ marginLeft: 10 }}
-                    startIcon={importFeedback.delay == null ? <PlayArrowIcon /> : <StopIcon />}
-                    className={classes.button}
-                    onClick={importFeedback.delay == null ? onStartImport : onStopImport}>
-                    {importFeedback.delay == null ? 'Start' : 'Stop'}
-                </Button>
-            </div>
-
-            <div className={classes.feedbackContainer}>
-                {importFeedback.importId != null && <ImportFeedback importFeedback={importFeedback} />}
-            </div>
-        </div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            disabled={buttonDisabled}
+                            startIcon={importFeedback.delay == null ? <PlayArrowIcon /> : <StopIcon />}
+                            onClick={importFeedback.delay == null ? onStartImport : onStopImport}
+                            style={{ minWidth: 180 }}>
+                            {importFeedback.delay == null ? 'Start' : 'Stop'}
+                        </Button>
+                    </Stack>
+                </Grid>
+                {importFeedback.importId != null &&
+                    <Grid item xs={12}><ImportFeedback importFeedback={importFeedback} /></Grid>
+                }
+            </Grid>
+        </Root>
     );
 }

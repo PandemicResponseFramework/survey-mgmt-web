@@ -1,22 +1,11 @@
 import { Box, Fade, LinearProgress, Typography, Pagination, Stack, Divider, Paper, TableContainer, Table, TableRow, TableHead, TableBody, TableCell } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import { styled } from '@mui/material/styles';
+import { Root, Fader, Pager } from './Styles';
 
-const Root = styled("div")`
-  width: '100%',
-`;
-const Fader = styled(Fade)`
-  margin-top: 10px;
-`;
-const Pager = styled(Pagination)`
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
-`;
 const EmptyResult = styled("div")`
   width: 100%;
   text-align: center;
@@ -59,42 +48,41 @@ export default function ImportFeedback(props) {
       </Fader>
 
       {importFeedback.entries.length !== 0 &&
-        <Pager
-          count={Math.ceil(importFeedback.entries.length / rowsPerPage)}
-          page={page}
-          onChange={handleChange}
-          color="primary"
-          showFirstButton showLastButton
-        />
-      }
-
-      {importFeedback.entries.length !== 0 &&
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>E-Mail</TableCell>
-                <TableCell>State</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {importFeedback.entries.slice((page - 1) * rowsPerPage, Math.min((page) * rowsPerPage, importFeedback.entries.length)).map((entry) => (
-                <TableRow
-                  key={entry.email}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">{entry.email}</TableCell>
-                  <TableCell>
-                    {entry.state === 'ERROR'
-                      ? <Box color="error.main" style={{ fontWeight: 'bold' }}>{entry.state}</Box>
-                      : <Box color="success.main" style={{ fontWeight: 'bold' }}>{entry.state}</Box>
-                    }
-                  </TableCell>
+        <Fragment>
+          <Pager
+            count={Math.ceil(importFeedback.entries.length / rowsPerPage)}
+            page={page}
+            onChange={handleChange}
+            color="primary"
+            showFirstButton showLastButton
+          />
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>E-Mail</TableCell>
+                  <TableCell>State</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {importFeedback.entries.slice((page - 1) * rowsPerPage, Math.min((page) * rowsPerPage, importFeedback.entries.length)).map((entry) => (
+                  <TableRow
+                    key={entry.email}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">{entry.email}</TableCell>
+                    <TableCell>
+                      {entry.state === 'ERROR'
+                        ? <Box color="error.main" style={{ fontWeight: 'bold' }}>{entry.state}</Box>
+                        : <Box color="success.main" style={{ fontWeight: 'bold' }}>{entry.state}</Box>
+                      }
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Fragment>
       }
 
       {importFeedback.entries.length === 0 &&

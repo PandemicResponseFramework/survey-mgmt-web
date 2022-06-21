@@ -1,47 +1,18 @@
-import { Button, Grid, TextField, Select, MenuItem, Checkbox, Fade, LinearProgress, FormControl, InputLabel } from '@mui/material';
-import { makeStyles } from 'tss-react/mui';
-import React, { useEffect } from 'react';
+import { Button, Grid, TextField, Select, MenuItem, Checkbox, LinearProgress, FormControl, InputLabel, Stack } from '@mui/material';
+import React, { Fragment, useEffect } from 'react';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
 import { isPositiveInteger, useInterval } from './Utils';
 import Axios from 'axios';
+import { Fader, Root } from './Styles';
 
-const useStyles = makeStyles()((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  container: {
-    '& > div': {
-      display: 'flex',
-      alignItems: 'center',
-    }
-  },
-  textField: {
-    flexGrow: 1,
-  },
-  inputGrid: {
-    '& > *': {
-      marginRight: 10,
-    },
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  formControl: {
-    minWidth: 200,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-}));
+/**
+ * CURRENTLY NOT IN USE !!!
+ * See: EditSurveyMetaDataDialog
+ */
 
 export default function SurveyCreate({ callback }) {
-
-  const { classes } = useStyles();
 
   const MAX_LENGTH_NAMEID = 32;
   const MAX_LENGTH_TITLE = 64;
@@ -246,20 +217,22 @@ export default function SurveyCreate({ callback }) {
   };
 
   return (
-    <div className={classes.root}>
-      <Fade in={loadingState.delay != null} className={classes.loading}>
+    <Root>
+      <Fader in={loadingState.delay != null}>
         <LinearProgress />
-      </Fade>
+      </Fader>
 
-      <Grid container spacing={1} className={classes.container}>
+      <Grid container spacing={2}>
+
         <Grid item xs={12}>
           <h2>Create New Survey</h2>
         </Grid>
+
         <Grid item xs={12}>
           <TextField
             label="NameID"
             variant="outlined"
-            className={classes.textField}
+            fullWidth
             onChange={onChangeNameId}
             value={surveyData.nameId}
             error={errors.nameId} />
@@ -268,7 +241,7 @@ export default function SurveyCreate({ callback }) {
           <TextField
             label="Title"
             variant="outlined"
-            className={classes.textField}
+            fullWidth
             onChange={onChangeTitle}
             value={surveyData.title}
             error={errors.title} />
@@ -277,14 +250,14 @@ export default function SurveyCreate({ callback }) {
           <TextField
             label="Description"
             variant="outlined"
-            className={classes.textField}
+            fullWidth
             multiline={true}
             rows={5}
             onChange={onChangeDescription}
             value={surveyData.description} />
         </Grid>
         <Grid item xs={12}>
-          <FormControl variant="outlined" className={classes.formControl}>
+          <FormControl variant="outlined" fullWidth>
             <InputLabel id="depends-on-label">Depends on Survey</InputLabel>
             <Select
               labelId="depends-on-label"
@@ -292,7 +265,8 @@ export default function SurveyCreate({ callback }) {
               value={surveyData.dependsOn}
               onChange={onChangeDependsOn}
               disabled={nameIds == null}
-              label="Depends on Survey">
+              label="Depends on Survey"
+            >
               <MenuItem value="-1" key="-1">
                 <em>None</em>
               </MenuItem>
@@ -302,67 +276,76 @@ export default function SurveyCreate({ callback }) {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} className={classes.inputGrid}>
-          <Checkbox
-            color="primary"
-            onChange={onChangeIntervalEnabled}
-            checked={surveyData.intervalEnabled} />
+        <Grid item xs={6} />
+        <Grid item xs={12}>
+          <Stack fullWidth direction="row" alignItems="center" spacing={1}>
+            <FormControlLabel
+              label="Repeat survey"
+              control={<Checkbox
+                color="primary"
+                onChange={onChangeIntervalEnabled}
+                checked={surveyData.intervalEnabled}
+              />}
+              fullWidth
+            />
 
-          <span>Repeat survey</span>
+            {surveyData.intervalEnabled &&
+              <Fragment>
+                <span>every</span>
 
-          {surveyData.intervalEnabled &&
-            <div className={classes.inputGrid}>
-              <span>every</span>
+                <TextField
+                  style={{ width: 50 }}
+                  onChange={onChangeIntervalValue}
+                  value={surveyData.intervalValue}
+                  error={errors.intervalValue} />
 
-              <TextField
-                style={{ width: 50 }}
-                onChange={onChangeIntervalValue}
-                value={surveyData.intervalValue}
-                error={errors.intervalValue} />
+                <Select value={0} >
+                  <MenuItem value={0}>week(s)</MenuItem>
+                </Select>
 
-              <Select value={0} >
-                <MenuItem value={0}>week(s)</MenuItem>
-              </Select>
+                <span>starting at</span>
 
-              <span>starting at</span>
-
-              <DateTimePicker
-                label="From"
-                inputFormat="ccc, LLL dd, yyyy HH:mm a ZZZZ"
-                onChange={onChangeIntervalStart}
-                value={surveyData.intervalStart}
-                error={errors.intervalStart}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </div>
-          }
+                <DateTimePicker
+                  label="From"
+                  inputFormat="ccc, LLL dd, yyyy HH:mm a ZZZZ"
+                  onChange={onChangeIntervalStart}
+                  value={surveyData.intervalStart}
+                  error={errors.intervalStart}
+                  disabled={survey != null}
+                  renderInput={(params) => <TextField {...params} style={{ flexGrow: 1 }} />}
+                />
+              </Fragment>
+            }
+          </Stack>
         </Grid>
-        <Grid item xs={12} className={classes.inputGrid}>
-          <Checkbox
-            color="primary"
-            disabled={!surveyData.intervalEnabled}
-            onChange={onChangeReminderEnabled}
-            checked={surveyData.reminderEnabled} />
+        <Grid item xs={12}>
+          <Stack fullWidth direction="row" alignItems="center" spacing={1}>
+            <FormControlLabel
+              label="Send reminder"
+              control={<Checkbox
+                color="primary"
+                disabled={!surveyData.intervalEnabled}
+                onChange={onChangeReminderEnabled}
+                checked={surveyData.reminderEnabled}
+              />}
+            />
 
-          <span>Send reminder</span>
-
-          {surveyData.reminderEnabled &&
-            <div className={classes.inputGrid}>
-              <span>after</span>
-
-              <TextField
-                style={{ width: 50 }}
-                onChange={onChangeReminderValue}
-                value={surveyData.reminderValue}
-                error={errors.reminderValue} />
-
-              <Select value={0}>
-                <MenuItem value={0}>day(s)</MenuItem>
-              </Select>
-            </div>
-          }
+            {surveyData.reminderEnabled &&
+              <Fragment>
+                <span>after</span>
+                <TextField
+                  style={{ width: 50 }}
+                  onChange={onChangeReminderValue}
+                  value={surveyData.reminderValue}
+                  error={errors.reminderValue} />
+                <Select value={0}>
+                  <MenuItem value={0}>day(s)</MenuItem>
+                </Select>
+              </Fragment>
+            }
+          </Stack>
         </Grid>
-        <Grid item xs={12} className={classes.inputGrid}>
+        <Grid item xs={12}>
           <Button
             variant="contained"
             color="secondary"
@@ -381,6 +364,6 @@ export default function SurveyCreate({ callback }) {
           </Button>
         </Grid>
       </Grid>
-    </div>
+    </Root >
   );
 }

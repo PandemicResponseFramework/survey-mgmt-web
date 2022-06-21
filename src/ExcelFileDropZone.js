@@ -1,39 +1,11 @@
-import { grey } from '@mui/material/colors';
-import { makeStyles } from 'tss-react/mui';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx/xlsx.mjs';
-
-const useStyles = makeStyles()((theme) => ({
-    root: {
-        display: 'flex',
-    },
-    dropzone: {
-        width: '100%',
-        height: 160,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-        borderWidth: 2,
-        borderRadius: 2,
-        borderColor: grey[300],
-        borderStyle: 'dashed',
-        backgroundColor: '#fafafa',
-        color: grey[400],
-        outline: 'none',
-        transition: 'border .24s ease-in-out',
-    },
-    dropzoneIcon: {
-        color: grey[300],
-    },
-}));
+import { DropZone } from './Styles';
 
 export default function ExcelFileDropZone(props) {
 
-    const { classes } = useStyles();
     const { callback } = props;
 
     const onDrop = useCallback(acceptedFiles => {
@@ -59,15 +31,13 @@ export default function ExcelFileDropZone(props) {
 
     }, []);
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ accept: ".xlsx", onDrop })
+    const { getRootProps, getInputProps } = useDropzone({ accept: ".xlsx", onDrop })
 
     return (
-        <div className={classes.root}>
-            <div {...getRootProps()} className={classes.dropzone}>
-                <input {...getInputProps()} multiple={false} />
-                <InsertDriveFileOutlinedIcon className={classes.dropzoneIcon} fontSize="large" />
-                <p>Drag 'n' drop the file here, or click to select a file</p>
-            </div>
-        </div>
+        <DropZone {...getRootProps()} >
+            <input {...getInputProps()} multiple={false} />
+            <InsertDriveFileOutlinedIcon style={{ color: '#e0e0e0' }} fontSize="large" />
+            <p>Drag 'n' drop the file here, or click to select a file</p>
+        </DropZone>
     );
 }

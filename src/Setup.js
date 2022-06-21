@@ -67,5 +67,21 @@ export const customTheme = createTheme({
         }
       }
     },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          marginLeft: 0,
+        }
+      }
+    },
+    MuiGrid: {
+      styleOverrides: {
+        root: {
+          '&.MuiGrid-container.MuiGrid-item': {
+            paddingTop: 16,
+          }
+        }
+      }
+    }
   }
 });

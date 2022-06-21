@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon';
 import { Button, TextField, Stack } from '@mui/material';
-import { makeStyles } from 'tss-react/mui';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import Axios from 'axios';
@@ -8,15 +7,8 @@ import FileDownload from 'js-file-download';
 import React from 'react';
 import { useSnackbar } from 'notistack';
 
-const useStyles = makeStyles()((theme) => ({
-  root: {
-    width: '60%',
-  },
-}));
-
 export default function ExportData() {
 
-  const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const now = DateTime.now();
   const [interval, setInterval] = React.useState({
@@ -50,7 +42,7 @@ export default function ExportData() {
   };
 
   return (
-    <Stack spacing={2} className={classes.root}>
+    <Stack spacing={2} style={{ width: '60%' }}>
       <DateTimePicker
         label="From"
         value={interval.start}
@@ -76,7 +68,6 @@ export default function ExportData() {
         color="primary"
         disabled={!interval.valid}
         startIcon={<GetAppIcon />}
-        className={classes.button}
         onClick={onStartExport}>
         Export
       </Button>

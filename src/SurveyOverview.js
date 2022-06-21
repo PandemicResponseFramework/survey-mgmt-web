@@ -1,4 +1,4 @@
-import { Box, Button, Fade, Grid, LinearProgress, Fab, Tooltip, Paper, TableContainer, Table, TableRow, TableHead, TableBody, TableCell } from '@mui/material';
+import { Box, Button, Grid, LinearProgress, Tooltip, Paper, TableContainer, Table, TableRow, TableHead, TableBody, TableCell, Stack } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AddIcon from '@mui/icons-material/Add';
@@ -9,33 +9,8 @@ import React, { useEffect } from 'react';
 import { useInterval } from './Utils';
 import { ReleaseStatusTypes, ManagementViewTypes } from './Constants';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
-import { styled } from '@mui/material/styles';
 import { DateTime } from "luxon";
-
-const Root = styled("div")`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: space-between;
-`;
-const Fader = styled(Fade)`
-  margin-top: 10px;
-`;
-const TableButton = styled(Fab)`
-  margin: 0;
-  padding: 0;
-  box-shadow: none;
-`;
-const TableGrid = styled(Grid)`
-  & .MuiGrid-item {
-    padding-top: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-left: 2px;
-    padding-right: 10px;
-  };
-  margin: 0;
-`;
+import { Root, Fader, TableFab, TableGrid } from './Styles'
 
 export default function SurveyOverview({ callback }) {
 
@@ -134,7 +109,7 @@ export default function SurveyOverview({ callback }) {
         <EditSurveyMetaDataDialog callbackHandleClose={onCreateSurvey} />
       }
 
-      <div>
+      <Stack direction="row" spacing={2}>
         <Button
           variant="contained"
           color="primary"
@@ -143,90 +118,88 @@ export default function SurveyOverview({ callback }) {
           onClick={() => onCreateSurvey(true)}>
           New Survey
         </Button>
-      </div>
+      </Stack>
 
-      <div>
-        <Fader in={loadingState.delay != null}>
-          <LinearProgress />
-        </Fader>
+      <Fader in={loadingState.delay != null}>
+        <LinearProgress />
+      </Fader>
 
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>NameId</TableCell>
-                <TableCell>Depends On</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Version</TableCell>
-                <TableCell>Active</TableCell>
-                <TableCell>Interval Start</TableCell>
-                <TableCell style={{ width: 160 }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((data) => (
-                <TableRow
-                  key={data.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">{data.nameId}</TableCell>
-                  <TableCell>{data.dependsOn}</TableCell>
-                  <TableCell>
-                    {data.releaseStatus === 'RELEASED'
-                      ? <Box color="success.main" style={{ fontWeight: 'bold' }}>{data.releaseStatus}</Box>
-                      : <Box color="warning.light" style={{ fontWeight: 'bold' }}>{data.releaseStatus}</Box>
-                    }
-                  </TableCell>
-                  <TableCell>{data.version + 1}</TableCell>
-                  <TableCell>
-                    {data.releaseStatus === 'RELEASED' && (data.intervalStart == null || new Date(data.intervalStart).getTime() <= Date.now())
-                      ? <Box color="success.main" style={{ fontWeight: 'bold' }}>YES</Box>
-                      : <Box color="warning.light" style={{ fontWeight: 'bold' }}>NO</Box>
-                    }
-                  </TableCell>
-                  <TableCell>{data.intervalStart ? DateTime.fromJSDate(new Date(data.intervalStart)).toFormat("ccc, LLL dd, yyyy HH:mm a ZZZZ") : 'NONE'}</TableCell>
-                  <TableCell>
-                    <TableGrid container spacing={1}>
-                      <Grid item xs={4}>
-                        {data.releaseStatus === 'RELEASED' && !data.editable && data.isLatestRelease &&
-                          <Tooltip title="New version">
-                            <TableButton size="small" color="primary" aria-label="new-release" onClick={() => onCreateNewVersion(data.id)}>
-                              <NewReleasesIcon />
-                            </TableButton>
-                          </Tooltip>
-                        }
-                        {data.releaseStatus !== 'RELEASED' &&
-                          <Tooltip title="Edit survey">
-                            <TableButton size="small" color="primary" aria-label="edit" onClick={(event) => callback({ view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id })}>
-                              <EditIcon />
-                            </TableButton>
-                          </Tooltip>
-                        }
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Tooltip title="View survey">
-                          <TableButton size="small" color="primary" aria-label="view" disabled={true}>
-                            <VisibilityIcon />
-                          </TableButton>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>NameId</TableCell>
+              <TableCell>Depends On</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Version</TableCell>
+              <TableCell>Active</TableCell>
+              <TableCell>Interval Start</TableCell>
+              <TableCell style={{ width: 160 }}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((data) => (
+              <TableRow
+                key={data.id}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">{data.nameId}</TableCell>
+                <TableCell>{data.dependsOn}</TableCell>
+                <TableCell>
+                  {data.releaseStatus === 'RELEASED'
+                    ? <Box color="success.main" style={{ fontWeight: 'bold' }}>{data.releaseStatus}</Box>
+                    : <Box color="warning.light" style={{ fontWeight: 'bold' }}>{data.releaseStatus}</Box>
+                  }
+                </TableCell>
+                <TableCell>{data.version + 1}</TableCell>
+                <TableCell>
+                  {data.releaseStatus === 'RELEASED' && (data.intervalStart == null || new Date(data.intervalStart).getTime() <= Date.now())
+                    ? <Box color="success.main" style={{ fontWeight: 'bold' }}>YES</Box>
+                    : <Box color="warning.light" style={{ fontWeight: 'bold' }}>NO</Box>
+                  }
+                </TableCell>
+                <TableCell>{data.intervalStart ? DateTime.fromJSDate(new Date(data.intervalStart)).toFormat("ccc, LLL dd, yyyy HH:mm a ZZZZ") : 'NONE'}</TableCell>
+                <TableCell>
+                  <TableGrid container spacing={1}>
+                    <Grid item xs={4}>
+                      {data.releaseStatus === 'RELEASED' && !data.editable && data.isLatestRelease &&
+                        <Tooltip title="New version">
+                          <TableFab size="small" color="primary" aria-label="new-release" onClick={() => onCreateNewVersion(data.id)}>
+                            <NewReleasesIcon />
+                          </TableFab>
                         </Tooltip>
-                      </Grid>
-                      <Grid item xs={4}>
-                        {data.releaseStatus !== 'RELEASED' &&
-                          <Tooltip title="Delete survey">
-                            <TableButton size="small" color="error" aria-label="edit">
-                              <DeleteIcon />
-                            </TableButton>
-                          </Tooltip>
-                        }
-                      </Grid>
-                    </TableGrid>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+                      }
+                      {data.releaseStatus !== 'RELEASED' &&
+                        <Tooltip title="Edit survey">
+                          <TableFab size="small" color="primary" aria-label="edit" onClick={(event) => callback({ view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id })}>
+                            <EditIcon />
+                          </TableFab>
+                        </Tooltip>
+                      }
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Tooltip title="View survey">
+                        <TableFab size="small" color="primary" aria-label="view" disabled={true}>
+                          <VisibilityIcon />
+                        </TableFab>
+                      </Tooltip>
+                    </Grid>
+                    <Grid item xs={4}>
+                      {data.releaseStatus !== 'RELEASED' &&
+                        <Tooltip title="Delete survey">
+                          <TableFab size="small" color="error" aria-label="edit">
+                            <DeleteIcon />
+                          </TableFab>
+                        </Tooltip>
+                      }
+                    </Grid>
+                  </TableGrid>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Root>
   );
 }
