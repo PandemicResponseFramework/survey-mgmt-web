@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import LuxonUtils from '@date-io/luxon';
 import { Button, TextField, Stack } from '@mui/material';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { DateTimePicker } from '@mui/x-date-pickers';
@@ -10,7 +10,7 @@ import { useSnackbar } from 'notistack';
 export default function ExportData() {
 
   const { enqueueSnackbar } = useSnackbar();
-  const now = DateTime.now();
+  const now = new LuxonUtils().date();
   const [interval, setInterval] = React.useState({
     start: now,
     end: now,
@@ -33,7 +33,7 @@ export default function ExportData() {
       },
       responseType: 'blob',
     }).then(response => {
-      const timestamp = DateTime.now().toFormat("yyyy-MM-dd-HHmm");
+      const timestamp = new LuxonUtils().date().toFormat("yyyy-MM-dd-HHmm");
       FileDownload(response.data, 'export_' + timestamp + '.xlsx')
     }).catch(function (error) {
       console.log(error);

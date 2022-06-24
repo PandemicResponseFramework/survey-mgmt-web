@@ -9,7 +9,7 @@ import React, { useEffect } from 'react';
 import { useInterval } from './Utils';
 import { ReleaseStatusTypes, ManagementViewTypes } from './Constants';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
-import { DateTime } from "luxon";
+import LuxonUtils from "@date-io/luxon";
 import { Root, Fader, TableFab, TableGrid } from './Styles'
 
 export default function SurveyOverview({ callback }) {
@@ -158,7 +158,7 @@ export default function SurveyOverview({ callback }) {
                     : <Box color="warning.light" style={{ fontWeight: 'bold' }}>NO</Box>
                   }
                 </TableCell>
-                <TableCell>{data.intervalStart ? DateTime.fromJSDate(new Date(data.intervalStart)).toFormat("ccc, LLL dd, yyyy HH:mm a ZZZZ") : 'NONE'}</TableCell>
+                <TableCell>{data.intervalStart ? new LuxonUtils().date(data.intervalStart).toFormat("ccc, LLL dd, yyyy HH:mm a ZZZZ") : 'NONE'}</TableCell>
                 <TableCell>
                   <TableGrid container spacing={1}>
                     <Grid item xs={4}>
