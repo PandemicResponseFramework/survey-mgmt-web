@@ -41,5 +41,5 @@
   },
   "publishConfig": {
     "@pandemicresponseframework:registry": "https://npm.pkg.github.com"
-  },
+  }
 }
