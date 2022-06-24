@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Axios from 'axios';
 import React, { useEffect } from 'react';
-import { useInterval } from './Utils';
+import { DATE_FORMAT, useInterval } from './Utils';
 import { ReleaseStatusTypes, ManagementViewTypes } from './Constants';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
 import LuxonUtils from "@date-io/luxon";
@@ -158,7 +158,7 @@ export default function SurveyOverview({ callback }) {
                     : <Box color="warning.light" style={{ fontWeight: 'bold' }}>NO</Box>
                   }
                 </TableCell>
-                <TableCell>{data.intervalStart ? new LuxonUtils().date(data.intervalStart).toFormat("ccc, LLL dd, yyyy HH:mm a ZZZZ") : 'NONE'}</TableCell>
+                <TableCell>{data.intervalStart ? new LuxonUtils().date(data.intervalStart).toFormat(DATE_FORMAT) : 'NONE'}</TableCell>
                 <TableCell>
                   <TableGrid container spacing={1}>
                     <Grid item xs={4}>

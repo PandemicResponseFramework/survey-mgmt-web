@@ -6,6 +6,7 @@ import Axios from 'axios';
 import FileDownload from 'js-file-download';
 import React from 'react';
 import { useSnackbar } from 'notistack';
+import { DATE_FORMAT } from './Utils';
 
 export default function ExportData() {
 
@@ -16,6 +17,7 @@ export default function ExportData() {
     end: now,
     valid: false,
   });
+  const EXPORT_SUFFIX_DATE_FORMAT = "yyyy-MM-dd-hhmmssa";
 
   const onStartChange = (date) => {
     setInterval({ ...interval, start: date, valid: date < interval.end });
@@ -33,7 +35,7 @@ export default function ExportData() {
       },
       responseType: 'blob',
     }).then(response => {
-      const timestamp = new LuxonUtils().date().toFormat("yyyy-MM-dd-HHmm");
+      const timestamp = new LuxonUtils().date().toFormat(EXPORT_SUFFIX_DATE_FORMAT);
       FileDownload(response.data, 'export_' + timestamp + '.xlsx')
     }).catch(function (error) {
       console.log(error);
@@ -46,14 +48,14 @@ export default function ExportData() {
       <DateTimePicker
         label="From"
         value={interval.start}
-        inputFormat="ccc, LLL dd, yyyy HH:mm a ZZZZ"
+        inputFormat={DATE_FORMAT}
         onChange={onStartChange}
         renderInput={(params) => <TextField {...params} />}
       />
       <DateTimePicker
         label="To"
         value={interval.end}
-        inputFormat="ccc, LLL dd, yyyy HH:mm a ZZZZ"
+        inputFormat={DATE_FORMAT}
         minDateTime={interval.start}
         onChange={onEndChange}
         error={!interval.valid}

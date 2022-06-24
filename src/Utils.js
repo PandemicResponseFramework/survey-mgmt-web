@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+export const DATE_FORMAT = "ccc, LLL dd, yyyy hh:mm a ZZZZ";
+
 export function useInterval(callback, delay) {
 
     const savedCallback = useRef();
