@@ -1,0 +1,2 @@
+# This file exists to override the .gitignore setup for npm build to include the /build 
+# directory in the package created via GitHub action.
