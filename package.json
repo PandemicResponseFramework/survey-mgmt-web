@@ -36,9 +36,6 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "files": [
-    "./build"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pandemicresponseframework/survey-mgmt-web.git"
