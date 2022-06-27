@@ -233,7 +233,7 @@ export default function SurveyCreate({ survey, callbackHandleClose }) {
         reminderType: 'AFTER_DAYS',
         reminderValue: parseInt(surveyData.reminderValue),
       }).then(function (response) {
-        callbackHandleClose(false, true);
+        callbackHandleClose(true);
       }).catch(function (error) {
         // do nothing
       });
