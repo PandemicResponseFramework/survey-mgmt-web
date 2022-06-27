@@ -5,12 +5,10 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import Axios from 'axios';
 import FileDownload from 'js-file-download';
 import React from 'react';
-import { useSnackbar } from 'notistack';
 import { DATE_FORMAT } from './Utils';
 
 export default function ExportData() {
 
-  const { enqueueSnackbar } = useSnackbar();
   const now = new LuxonUtils().date();
   const [interval, setInterval] = React.useState({
     start: now,
@@ -38,8 +36,7 @@ export default function ExportData() {
       const timestamp = new LuxonUtils().date().toFormat(EXPORT_SUFFIX_DATE_FORMAT);
       FileDownload(response.data, 'export_' + timestamp + '.xlsx')
     }).catch(function (error) {
-      console.log(error);
-      enqueueSnackbar(error.message, { variant: 'error' });
+      // ignore
     });
   };
 
