@@ -6,7 +6,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "postbuild": "printf 'gitdir: ./../.git/worktrees/build' > ./build/.git",
+    "postbuild": "echo gitdir: ./../.git/worktrees/build> ./build/.git",
     "test": "react-scripts test --env=jsdom --passWithNoTests",
     "eject": "react-scripts eject"
   },
