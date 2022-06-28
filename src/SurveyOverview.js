@@ -89,7 +89,7 @@ export default function SurveyOverview({ callback }) {
           delay: 500,
         });
       }).catch(function (error) {
-        // do nothing
+        // ignore
       });
   };
 
@@ -101,6 +101,18 @@ export default function SurveyOverview({ callback }) {
         ...loadingState,
         delay: 500,
       })
+  };
+
+  const onDeleteSurvey = (surveyId) => {
+    Axios.delete('/manage/survey/' + surveyId)
+      .then(function (response) {
+        setLoadingState({
+          ...loadingState,
+          delay: 500,
+        });
+      }).catch(function (error) {
+        // ignore
+      });
   };
 
   return (
@@ -187,7 +199,7 @@ export default function SurveyOverview({ callback }) {
                     <Grid item xs={4}>
                       {data.releaseStatus !== 'RELEASED' &&
                         <Tooltip title="Delete survey">
-                          <TableFab size="small" color="error" aria-label="edit">
+                          <TableFab size="small" color="error" aria-label="delete" onClick={() => onDeleteSurvey(data.id)}>
                             <DeleteIcon />
                           </TableFab>
                         </Tooltip>
