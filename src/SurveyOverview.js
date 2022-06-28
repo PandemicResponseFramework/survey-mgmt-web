@@ -3,11 +3,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Axios from 'axios';
 import React, { useEffect } from 'react';
 import { DATE_FORMAT, useInterval } from './Utils';
-import { ReleaseStatusTypes, ManagementViewTypes } from './Constants';
+import { ManagementViewTypes } from './Constants';
 import EditSurveyMetaDataDialog from './EditSurveyMetaDataDialog';
 import LuxonUtils from "@date-io/luxon";
 import { Root, Fader, TableFab, TableGrid } from './Styles'
@@ -49,38 +49,6 @@ export default function SurveyOverview({ callback }) {
     };
   }, []);
 
-  const prepare = () => {
-    if (!loadingState.data || loadingState.data.length === 0)
-      return [];
-
-    const result = [...loadingState.data];
-
-    result.forEach(element => {
-
-      let highestReleasedVersion = -1;
-
-      result.forEach(inner => {
-        if (inner.nameId === element.nameId) {
-          // There exists another version, which is in EDIT mode
-          if (inner.releaseStatus === ReleaseStatusTypes.EDIT)
-            element.editable = true;
-          // Collect latest release version
-          if (inner.releaseStatus === ReleaseStatusTypes.RELEASED && inner.version > highestReleasedVersion)
-            highestReleasedVersion = inner.version;
-        }
-      });
-
-      if (element.releaseStatus === ReleaseStatusTypes.RELEASED && element.version === highestReleasedVersion)
-        element.isLatestRelease = true;
-      else
-        element.isLatestRelease = false;
-    });
-
-    return result;
-  }
-
-  const data = prepare();
-
   const onCreateNewVersion = (surveyId) => {
     Axios.post('/manage/survey/' + surveyId + '/version')
       .then(function (response) {
@@ -115,6 +83,17 @@ export default function SurveyOverview({ callback }) {
       });
   };
 
+  const onReleaseSurvey = (surveyId) => {
+    Axios.post('/manage/survey/' + surveyId + '/release').then(function (response) {
+      setLoadingState({
+        ...loadingState,
+        delay: 500,
+      });
+    }).catch(function (error) {
+      console.log(error);
+    });
+  };
+
   return (
     <Root>
       {surveyMetaDialogSetup &&
@@ -146,11 +125,11 @@ export default function SurveyOverview({ callback }) {
               <TableCell>Version</TableCell>
               <TableCell>Active</TableCell>
               <TableCell>Interval Start</TableCell>
-              <TableCell style={{ width: 160 }}>Actions</TableCell>
+              <TableCell style={{ width: 160, textAlign: 'center' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((data) => (
+            {loadingState.data.map((data) => (
               <TableRow
                 key={data.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -174,30 +153,32 @@ export default function SurveyOverview({ callback }) {
                 <TableCell>
                   <TableGrid container spacing={1}>
                     <Grid item xs={4}>
-                      {data.releaseStatus === 'RELEASED' && !data.editable && data.isLatestRelease &&
+                      {data.versionable &&
                         <Tooltip title="New version">
                           <TableFab size="small" color="primary" aria-label="new-release" onClick={() => onCreateNewVersion(data.id)}>
                             <NewReleasesIcon />
                           </TableFab>
                         </Tooltip>
                       }
-                      {data.releaseStatus !== 'RELEASED' &&
+                      {data.editable &&
                         <Tooltip title="Edit survey">
-                          <TableFab size="small" color="primary" aria-label="edit" onClick={(event) => callback({ view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id })}>
+                          <TableFab size="small" color="primary" aria-label="edit" onClick={() => callback({ view: ManagementViewTypes.SURVEY_EDIT, surveyId: data.id })}>
                             <EditIcon />
                           </TableFab>
                         </Tooltip>
                       }
                     </Grid>
                     <Grid item xs={4}>
-                      <Tooltip title="View survey">
-                        <TableFab size="small" color="primary" aria-label="view" disabled={true}>
-                          <VisibilityIcon />
-                        </TableFab>
-                      </Tooltip>
+                      {data.releasable &&
+                        <Tooltip title="Release survey">
+                          <TableFab size="small" color="secondary" aria-label="release" onClick={() => onReleaseSurvey(data.id)}>
+                            <CloudUploadIcon />
+                          </TableFab>
+                        </Tooltip>
+                      }
                     </Grid>
                     <Grid item xs={4}>
-                      {data.releaseStatus !== 'RELEASED' &&
+                      {data.deletable &&
                         <Tooltip title="Delete survey">
                           <TableFab size="small" color="error" aria-label="delete" onClick={() => onDeleteSurvey(data.id)}>
                             <DeleteIcon />

@@ -11,7 +11,6 @@ import NumberIcon from '@mui/icons-material/Looks3Outlined';
 import SliderIcon from '@mui/icons-material/TuneOutlined';
 import ListIcon from '@mui/icons-material/ReorderOutlined';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -113,14 +112,6 @@ export default function SurveyEdit({ callback, surveyId }) {
   const onEditSurvey = (survey) => {
     setSurveyDialogSetup({
       survey: survey,
-    });
-  };
-
-  const onReleaseSurvey = () => {
-    Axios.post('/manage/survey/' + surveyId + '/release').then(function (response) {
-      callback({ view: ManagementViewTypes.SURVEY_OVERVIEW });
-    }).catch(function (error) {
-      console.log(error);
     });
   };
 
@@ -408,13 +399,6 @@ export default function SurveyEdit({ callback, surveyId }) {
           startIcon={<ArrowBackIcon />}
           onClick={() => callback({ view: ManagementViewTypes.SURVEY_OVERVIEW })}
         >Back</Button>
-
-        <Button
-          variant="contained"
-          color="secondary"
-          startIcon={<CloudUploadIcon />}
-          onClick={onReleaseSurvey}
-        >Release Survey</Button>
       </Stack>
 
       <Fader in={loadingState.delay != null}>
