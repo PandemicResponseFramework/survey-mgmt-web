@@ -43,22 +43,23 @@ export default function SurveyCreate({ survey, callbackHandleClose }) {
   const [errors, setErrors] = React.useState({ ...ERRORS_INIT });
 
   const [loadingState, setLoadingState] = React.useState({
-    data: [],
+    nameIds: [],
     delay: 500,
   });
 
   useInterval(() => {
 
     Axios.get('/manage/nameid').then(function (response) {
+      let nameIds = survey ? response.data.filter((value) => value !== survey.nameId) : response.data;
       setLoadingState({
         ...loadingState,
-        data: survey ? response.data.filter((value) => value !== survey.nameId) : response.data,
+        nameIds: nameIds,
         delay: null,
       });
       if (survey && survey.dependsOn)
         setSurveyData({
           ...surveyData,
-          dependsOn: response.data.indexOf(survey.dependsOn),
+          dependsOn: nameIds.indexOf(survey.dependsOn),
         });
     }).catch(function (error) {
       if (loadingState) {
@@ -79,8 +80,6 @@ export default function SurveyCreate({ survey, callbackHandleClose }) {
       })
     };
   }, []);
-
-  const nameIds = loadingState.data;
 
   const onChangeNameId = (event) => {
     if (event.target.value.length <= MAX_LENGTH_NAMEID && REGEX_NAMEID.test(event.target.value)) {
@@ -198,41 +197,31 @@ export default function SurveyCreate({ survey, callbackHandleClose }) {
       return;
     }
 
+    const surveyPost = {
+      nameId: surveyData.nameId,
+      title: surveyData.title,
+      description: surveyData.description,
+      dependsOn: surveyData.dependsOn === -1 ? null : loadingState.nameIds[surveyData.dependsOn],
+      intervalEnabled: surveyData.intervalEnabled,
+      intervalType: surveyData.intervalType,
+      intervalValue: surveyData.intervalEnabled ? parseInt(surveyData.intervalValue) : null,
+      intervalStart: surveyData.intervalEnabled ? new Date(surveyData.intervalStart).toISOString() : null,
+      reminderEnabled: surveyData.reminderEnabled,
+      reminderType: surveyData.reminderType,
+      reminderValue: surveyData.reminderEnabled ? parseInt(surveyData.reminderValue) : null,
+    };
+
     // save
     if (survey == null) {
 
-      Axios.post('/manage/survey', {
-        nameId: surveyData.nameId,
-        title: surveyData.title,
-        description: surveyData.description,
-        dependsOn: surveyData.dependsOn === -1 ? null : nameIds[surveyData.dependsOn],
-        intervalEnabled: surveyData.intervalEnabled,
-        intervalType: 'WEEKLY',
-        intervalValue: parseInt(surveyData.intervalValue),
-        intervalStart: new Date(surveyData.intervalStart).toISOString(),
-        reminderEnabled: surveyData.reminderEnabled,
-        reminderType: 'AFTER_DAYS',
-        reminderValue: parseInt(surveyData.reminderValue),
-      }).then(function (response) {
+      Axios.post('/manage/survey', surveyPost).then(function (response) {
         callbackHandleClose(false, true);
       }).catch(function (error) {
         // do nothing
       });
     } else {
 
-      Axios.post('/manage/survey/' + survey.id, {
-        nameId: surveyData.nameId,
-        title: surveyData.title,
-        description: surveyData.description,
-        dependsOn: surveyData.dependsOn === -1 ? null : nameIds[surveyData.dependsOn],
-        intervalEnabled: surveyData.intervalEnabled,
-        intervalType: 'WEEKLY',
-        intervalValue: parseInt(surveyData.intervalValue),
-        intervalStart: new Date(surveyData.intervalStart).toISOString(),
-        reminderEnabled: surveyData.reminderEnabled,
-        reminderType: 'AFTER_DAYS',
-        reminderValue: parseInt(surveyData.reminderValue),
-      }).then(function (response) {
+      Axios.post('/manage/survey/' + survey.id, surveyPost).then(function (response) {
         callbackHandleClose(true);
       }).catch(function (error) {
         // do nothing
@@ -288,13 +277,13 @@ export default function SurveyCreate({ survey, callbackHandleClose }) {
                 id="depends-on-select"
                 value={surveyData.dependsOn}
                 onChange={onChangeDependsOn}
-                disabled={nameIds == null}
+                disabled={loadingState.nameIds == null}
                 label="Depends on Survey"
               >
                 <MenuItem value="-1" key="-1">
                   <em>None</em>
                 </MenuItem>
-                {nameIds.map((row, key) => (
+                {loadingState.nameIds.map((row, key) => (
                   <MenuItem value={key} key={key}>{row}</MenuItem>
                 ))}
               </Select>
